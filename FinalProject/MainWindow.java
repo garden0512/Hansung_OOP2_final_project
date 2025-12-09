@@ -58,6 +58,7 @@ public class MainWindow extends JFrame{
         this.exitButton = CreateRelativeButton("나가기", deviceWidth, deviceHeight, 15, 88, 16, 4);
         this.productionListButton = CreateRelativeButton("제작진 목록", deviceWidth, deviceHeight, 15, 82, 16, 4);
         this.steamPageButton = CreateRelativeButton("스팀 페이지 이동", deviceWidth, deviceHeight, 15, 76, 16, 4);
+        this.studioNewsButton = CreateRelativeButton("스팀 페이지 이동", deviceWidth, deviceHeight, 15, 76, 16, 4);
 
         //버튼 기능 오버라이딩
         this.exitButton.addActionListener(new ActionListener()      // 해당 버튼을 누를 시 발생할 이벤트 설정
@@ -81,7 +82,15 @@ public class MainWindow extends JFrame{
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                OpenSteamPage();  // 게임 제작진 목록 표시창으로 이동
+                OpenSteamPage();  // 스팀 페이지 열기
+            }
+        });
+        this.studioNewsButton.addActionListener(new ActionListener()      // 해당 버튼을 누를 시 발생할 이벤트 설정
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                ShowStudioNewsPage();  // 게임사 소식 보러가기
             }
         });
 
@@ -89,6 +98,7 @@ public class MainWindow extends JFrame{
         this.add(exitButton);
         this.add(productionListButton);
         this.add(steamPageButton);
+        this.add(studioNewsButton);
     }
 
     //요소들을 화면에 맞게 동적으로 비율을 정해서 상대적으로 배치
@@ -104,6 +114,11 @@ public class MainWindow extends JFrame{
     }
 
     //버튼 기능 메소드들
+    private void ShowStudioNewsPage()
+    {
+        //추후 추가예정
+    }
+
     private void OpenSteamPage()
     {
         //추후 추가예정
