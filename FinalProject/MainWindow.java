@@ -58,7 +58,7 @@ public class MainWindow extends JFrame{
         this.exitButton = CreateRelativeButton("나가기", deviceWidth, deviceHeight, 15, 88, 16, 4);
         this.productionListButton = CreateRelativeButton("제작진 목록", deviceWidth, deviceHeight, 15, 82, 16, 4);
         this.steamPageButton = CreateRelativeButton("스팀 페이지 이동", deviceWidth, deviceHeight, 15, 76, 16, 4);
-        this.studioNewsButton = CreateRelativeButton("스팀 페이지 이동", deviceWidth, deviceHeight, 15, 76, 16, 4);
+        this.studioNewsButton = CreateRelativeButton("garden Studio 소식", deviceWidth, deviceHeight, 15, 76, 16, 4);
 
         //버튼 기능 오버라이딩
         this.exitButton.addActionListener(new ActionListener()      // 해당 버튼을 누를 시 발생할 이벤트 설정
