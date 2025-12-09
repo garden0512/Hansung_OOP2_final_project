@@ -7,6 +7,10 @@ import java.awt.GraphicsDevice;
 
 public class MainWindow extends JFrame{
     private JButton exitButton;
+    private JButton testButton1;
+    private JButton testButton2;
+    private JButton testButton3;
+    private JButton testButton4;
     private int deviceWidth;
     private int deviceHeight;
 
@@ -36,20 +40,26 @@ public class MainWindow extends JFrame{
             this.deviceHeight = graphicsDevice.getDisplayMode().getHeight();    // 현재 프레임의 세로값
         }
 
-        //버튼 생성
-        this.exitButton = CreateRelativeButton("Exit", deviceWidth, deviceHeight, 3, 88, 16, 5);
-        this.exitButton.addActionListener(new ActionListener()      // 해당 버튼을 누를 시 발생할 이벤트 설정
-        {
-           @Override
-           public void actionPerformed(ActionEvent e)
-           {
-               Exit();  // 게임 종료 메소드 호출
-           }
-        });
-        this.add(exitButton);
+        //기본 UI 생성
+        CreateButtons();    // 버튼들 만드는 메소드
 
         //가시성 설정
         this.setVisible(true);      // 프레임이 보이도록 설정
+    }
+
+    //메인화면 버튼들을 생성하는 메소드
+    private void CreateButtons()
+    {
+        this.exitButton = CreateRelativeButton("나가기", deviceWidth, deviceHeight, 15, 88, 16, 4);
+        this.exitButton.addActionListener(new ActionListener()      // 해당 버튼을 누를 시 발생할 이벤트 설정
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                Exit();  // 게임 종료 메소드 호출
+            }
+        });
+        this.add(exitButton);
     }
 
     //요소들을 화면에 맞게 동적으로 비율을 정해서 상대적으로 배치
