@@ -7,10 +7,14 @@ import java.awt.GraphicsDevice;
 
 public class MainWindow extends JFrame{
     private JButton exitButton;
-    private JButton testButton1;
-    private JButton testButton2;
-    private JButton testButton3;
-    private JButton testButton4;
+    private JButton productionListButton;
+    private JButton steamPageButton;
+    private JButton studioNewsButton;
+    private JButton settingButton;
+    private JButton loadGameButton;
+    private JButton infinityModeButton;
+    private JButton campaignButton;
+    private JButton continueGameButton;
     private int deviceWidth;
     private int deviceHeight;
 
@@ -50,7 +54,11 @@ public class MainWindow extends JFrame{
     //메인화면 버튼들을 생성하는 메소드
     private void CreateButtons()
     {
+        //버튼 생성
         this.exitButton = CreateRelativeButton("나가기", deviceWidth, deviceHeight, 15, 88, 16, 4);
+        this.productionListButton = CreateRelativeButton("제작진 목록", deviceWidth, deviceHeight, 15, 82, 16, 4);
+
+        //버튼 기능 오버라이딩
         this.exitButton.addActionListener(new ActionListener()      // 해당 버튼을 누를 시 발생할 이벤트 설정
         {
             @Override
@@ -59,7 +67,18 @@ public class MainWindow extends JFrame{
                 Exit();  // 게임 종료 메소드 호출
             }
         });
+        this.productionListButton.addActionListener(new ActionListener()      // 해당 버튼을 누를 시 발생할 이벤트 설정
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                ShowCrewList();  // 게임 제작진 목록 표시창으로 이동
+            }
+        });
+
+        //버튼 추가
         this.add(exitButton);
+        this.add(productionListButton);
     }
 
     //요소들을 화면에 맞게 동적으로 비율을 정해서 상대적으로 배치
@@ -75,6 +94,11 @@ public class MainWindow extends JFrame{
     }
 
     //버튼 기능 메소드들
+    private void ShowCrewList()
+    {
+        //추후 추가예정
+    }
+
     private void Exit()
     {
         System.exit(0);
