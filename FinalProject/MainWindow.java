@@ -63,6 +63,7 @@ public class MainWindow extends JFrame{
         this.loadGameButton = CreateRelativeButton("게임 불러오기", deviceWidth, deviceHeight, 15, 48, 16, 4);
         this.infinityModeButton = CreateRelativeButton("무한모드", deviceWidth, deviceHeight, 15, 41, 16, 5);
         this.campaignButton = CreateRelativeButton("캠페인 모드", deviceWidth, deviceHeight, 15, 35, 16, 4);
+        this.continueGameButton = CreateRelativeButton("계속", deviceWidth, deviceHeight, 15, 26, 16, 4);
 
         //버튼 기능 오버라이딩
         this.exitButton.addActionListener(new ActionListener()      // 해당 버튼을 누를 시 발생할 이벤트 설정
@@ -129,6 +130,14 @@ public class MainWindow extends JFrame{
                 OpenCampaignModeSetting();      // 캠페인 모드 설정 열기
             }
         });
+        this.continueGameButton.addActionListener(new ActionListener()      // 해당 버튼을 누를 시 발생할 이벤트 설정
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                ContinueRecentGame();       // 최근 진행한 게임 이어하기
+            }
+        });
 
         //버튼 추가
         this.add(exitButton);
@@ -139,6 +148,7 @@ public class MainWindow extends JFrame{
         this.add(loadGameButton);
         this.add(infinityModeButton);
         this.add(campaignButton);
+        this.add(continueGameButton);
     }
 
     //요소들을 화면에 맞게 동적으로 비율을 정해서 상대적으로 배치
@@ -154,6 +164,11 @@ public class MainWindow extends JFrame{
     }
 
     //버튼 기능 메소드들
+    private void ContinueRecentGame()
+    {
+        //추후 추가예정
+    }
+
     private void OpenCampaignModeSetting()
     {
         //추후 추가예정
