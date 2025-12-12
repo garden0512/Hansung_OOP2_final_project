@@ -22,16 +22,19 @@ public class MainWindow extends JFrame{
     ImageIcon continueDefaultIcon = new ImageIcon("images/continue_default.png");
     ImageIcon campaignDefaultIcon = new ImageIcon("images/campaign_default.png");
     ImageIcon infinityModeDefaultIcon = new ImageIcon("images/infinity_default.png");
+    ImageIcon loadGameDefaultIcon = new ImageIcon("images/load_default.png");
 
     //커서 호버링 이미지 로딩
     ImageIcon continueRollOverIcon = new ImageIcon("images/continue_hover.png");
     ImageIcon campaignRollOverIcon = new ImageIcon("images/campaign_hover.png");
     ImageIcon infinityModeRollOverIcon = new ImageIcon("images/infinity_hover.png");
+    ImageIcon loadGameRollOverIcon = new ImageIcon("images/load_hover.png");
 
     //클릭 이미지 로딩
     ImageIcon continuePressedIcon = new ImageIcon("images/continue_hover.png");
     ImageIcon campaignPressedIcon = new ImageIcon("images/campaign_hover.png");
     ImageIcon infinityModePressedIcon = new ImageIcon("images/infinity_hover.png");
+    ImageIcon loadGamePressedIcon = new ImageIcon("images/load_hover.png");
 
     //게임을 플레이 할 수 있도록 하는 객체 생성자 메소드
     public MainWindow()
@@ -79,6 +82,20 @@ public class MainWindow extends JFrame{
         this.infinityModeButton = CreateRelativeButton(infinityModeDefaultIcon, deviceWidth, deviceHeight, 15, 41, 16, 5);
         this.campaignButton = CreateRelativeButton(campaignDefaultIcon, deviceWidth, deviceHeight, 15, 35, 16, 4);
         this.continueGameButton = CreateRelativeButton(continueDefaultIcon, deviceWidth, deviceHeight, 15, 26, 16, 4);
+
+        //반복 작업을 위한 버튼 리스트 생성
+        JButton[] mainMenuButtons =
+                {
+                        continueGameButton,
+                        campaignButton,
+                        infinityModeButton,
+                        loadGameButton,
+                        settingButton,
+                        studioNewsButton,
+                        steamPageButton,
+                        productionListButton,
+                        exitButton,
+                };
 
         //버튼 기능 오버라이딩
         this.exitButton.addActionListener(new ActionListener()      // 해당 버튼을 누를 시 발생할 이벤트 설정
@@ -165,20 +182,14 @@ public class MainWindow extends JFrame{
         this.add(campaignButton);
         this.add(continueGameButton);
 
-        //버튼 내부 채우지 않도록 하는 메소드
-        continueGameButton.setContentAreaFilled(false);
-        campaignButton.setContentAreaFilled(false);
-        infinityModeButton.setContentAreaFilled(false);
+        //버튼 UI 설정
+        for(JButton button : mainMenuButtons)
+        {
+            button.setContentAreaFilled(false);     //버튼 내부 채우지 않도록 하는 메소드
+            button.setBorderPainted(false);     //버튼 외곽선 삭제
+            button.setFocusPainted(false);      //버튼 선택 시 생성되는 얇은 선 삭제
 
-        //외곽선 삭제
-        continueGameButton.setBorderPainted(false);
-        campaignButton.setBorderPainted(false);
-        infinityModeButton.setBorderPainted(false);
-
-        //버튼 선택 시 생성되는 얇은 선 삭제
-        continueGameButton.setFocusPainted(false);
-        campaignButton.setFocusPainted(false);
-        infinityModeButton.setFocusPainted(false);
+        }
 
         //버튼 호버링 상태 설정
         continueGameButton.setRolloverIcon(continueRollOverIcon);
