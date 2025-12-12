@@ -24,6 +24,7 @@ public class MainWindow extends JFrame{
     ImageIcon infinityModeDefaultIcon = new ImageIcon("images/infinity_default.png");
     ImageIcon loadGameDefaultIcon = new ImageIcon("images/load_default.png");
     ImageIcon settingDefaultIcon = new ImageIcon("images/setting_default.png");
+    ImageIcon studioNewsDefaultIcon = new ImageIcon("images/studio_default.png");
 
     //커서 호버링 이미지 로딩
     ImageIcon continueRollOverIcon = new ImageIcon("images/continue_hover.png");
@@ -31,6 +32,7 @@ public class MainWindow extends JFrame{
     ImageIcon infinityModeRollOverIcon = new ImageIcon("images/infinity_hover.png");
     ImageIcon loadGameRollOverIcon = new ImageIcon("images/load_hover.png");
     ImageIcon settingRollOverIcon = new ImageIcon("images/setting_hover.png");
+    ImageIcon studioNewsRollOverIcon = new ImageIcon("images/studio_hover.png");
 
     //클릭 이미지 로딩
     ImageIcon continuePressedIcon = new ImageIcon("images/continue_hover.png");
@@ -38,6 +40,7 @@ public class MainWindow extends JFrame{
     ImageIcon infinityModePressedIcon = new ImageIcon("images/infinity_hover.png");
     ImageIcon loadGamePressedIcon = new ImageIcon("images/load_hover.png");
     ImageIcon settingPressedIcon = new ImageIcon("images/setting_hover.png");
+    ImageIcon studioNewsPressedIcon = new ImageIcon("images/studio_hover.png");
 
     //게임을 플레이 할 수 있도록 하는 객체 생성자 메소드
     public MainWindow()
@@ -79,7 +82,7 @@ public class MainWindow extends JFrame{
         this.exitButton = CreateRelativeButton(continueDefaultIcon, deviceWidth, deviceHeight, 15, 88, 16, 4);
         this.productionListButton = CreateRelativeButton(continueDefaultIcon, deviceWidth, deviceHeight, 15, 82, 16, 4);
         this.steamPageButton = CreateRelativeButton(continueDefaultIcon, deviceWidth, deviceHeight, 15, 76, 16, 4);
-        this.studioNewsButton = CreateRelativeButton(continueDefaultIcon, deviceWidth, deviceHeight, 15, 70, 16, 4);
+        this.studioNewsButton = CreateRelativeButton(studioNewsDefaultIcon, deviceWidth, deviceHeight, 15, 70, 16, 4);
         this.settingButton = CreateRelativeButton(settingDefaultIcon, deviceWidth, deviceHeight, 15, 54, 16, 4);
         this.loadGameButton = CreateRelativeButton(loadGameDefaultIcon, deviceWidth, deviceHeight, 15, 48, 16, 4);
         this.infinityModeButton = CreateRelativeButton(infinityModeDefaultIcon, deviceWidth, deviceHeight, 15, 41, 16, 5);
@@ -199,6 +202,7 @@ public class MainWindow extends JFrame{
         infinityModeButton.setRolloverIcon(infinityModeRollOverIcon);
         loadGameButton.setRolloverIcon(loadGameRollOverIcon);
         settingButton.setRolloverIcon(settingRollOverIcon);
+        studioNewsButton.setRolloverIcon(studioNewsRollOverIcon);
 
         //버튼 클릭 상태 설정
         continueGameButton.setPressedIcon(continuePressedIcon);
@@ -206,6 +210,7 @@ public class MainWindow extends JFrame{
         infinityModeButton.setPressedIcon(infinityModePressedIcon);
         loadGameButton.setPressedIcon(loadGamePressedIcon);
         settingButton.setPressedIcon(settingPressedIcon);
+        studioNewsButton.setPressedIcon(studioNewsPressedIcon);
     }
 
     //요소들을 화면에 맞게 동적으로 비율을 정해서 상대적으로 배치
