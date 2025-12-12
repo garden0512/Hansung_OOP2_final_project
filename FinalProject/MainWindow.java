@@ -18,6 +18,15 @@ public class MainWindow extends JFrame{
     private int deviceWidth;
     private int deviceHeight;
 
+    //기본 이미지 로딩
+    ImageIcon continueDefaultIcon = new ImageIcon("images/continue_default.png");
+
+    //커서 호버링 이미지 로딩
+    ImageIcon continueRollOverIcon = new ImageIcon("images/continue_hover.png");
+
+    //클릭 이미지 로딩
+    ImageIcon continuePressedIcon = new ImageIcon("images/continue_hover.png");
+
     //게임을 플레이 할 수 있도록 하는 객체 생성자 메소드
     public MainWindow()
     {
@@ -55,15 +64,15 @@ public class MainWindow extends JFrame{
     private void CreateButtons()
     {
         //버튼 생성
-        this.exitButton = CreateRelativeButton("나가기", deviceWidth, deviceHeight, 15, 88, 16, 4);
-        this.productionListButton = CreateRelativeButton("제작진 목록", deviceWidth, deviceHeight, 15, 82, 16, 4);
-        this.steamPageButton = CreateRelativeButton("스팀 페이지 이동", deviceWidth, deviceHeight, 15, 76, 16, 4);
-        this.studioNewsButton = CreateRelativeButton("garden Studio 소식", deviceWidth, deviceHeight, 15, 70, 16, 4);
-        this.settingButton = CreateRelativeButton("설정", deviceWidth, deviceHeight, 15, 54, 16, 4);
-        this.loadGameButton = CreateRelativeButton("게임 불러오기", deviceWidth, deviceHeight, 15, 48, 16, 4);
-        this.infinityModeButton = CreateRelativeButton("무한모드", deviceWidth, deviceHeight, 15, 41, 16, 5);
-        this.campaignButton = CreateRelativeButton("캠페인 모드", deviceWidth, deviceHeight, 15, 35, 16, 4);
-        this.continueGameButton = CreateRelativeButton("계속", deviceWidth, deviceHeight, 15, 26, 16, 4);
+        this.exitButton = CreateRelativeButton(continueDefaultIcon, deviceWidth, deviceHeight, 15, 88, 16, 4);
+        this.productionListButton = CreateRelativeButton(continueDefaultIcon, deviceWidth, deviceHeight, 15, 82, 16, 4);
+        this.steamPageButton = CreateRelativeButton(continueDefaultIcon, deviceWidth, deviceHeight, 15, 76, 16, 4);
+        this.studioNewsButton = CreateRelativeButton(continueDefaultIcon, deviceWidth, deviceHeight, 15, 70, 16, 4);
+        this.settingButton = CreateRelativeButton(continueDefaultIcon, deviceWidth, deviceHeight, 15, 54, 16, 4);
+        this.loadGameButton = CreateRelativeButton(continueDefaultIcon, deviceWidth, deviceHeight, 15, 48, 16, 4);
+        this.infinityModeButton = CreateRelativeButton(continueDefaultIcon, deviceWidth, deviceHeight, 15, 41, 16, 5);
+        this.campaignButton = CreateRelativeButton(continueDefaultIcon, deviceWidth, deviceHeight, 15, 35, 16, 4);
+        this.continueGameButton = CreateRelativeButton(continueDefaultIcon, deviceWidth, deviceHeight, 15, 26, 16, 4);
 
         //버튼 기능 오버라이딩
         this.exitButton.addActionListener(new ActionListener()      // 해당 버튼을 누를 시 발생할 이벤트 설정
@@ -149,10 +158,16 @@ public class MainWindow extends JFrame{
         this.add(infinityModeButton);
         this.add(campaignButton);
         this.add(continueGameButton);
+
+        //버튼 호버링 상태 설정
+        continueGameButton.setRolloverIcon(continueRollOverIcon);
+
+        //버튼 클릭 상태 설정
+        continueGameButton.setPressedIcon(continuePressedIcon);
     }
 
     //요소들을 화면에 맞게 동적으로 비율을 정해서 상대적으로 배치
-    private JButton CreateRelativeButton(String buttonText, int width, int height, int xPositionPercent, int yPositionPercent, int elementWidthPercent, int elementHeightPercent)
+    private JButton CreateRelativeButton(ImageIcon buttonText, int width, int height, int xPositionPercent, int yPositionPercent, int elementWidthPercent, int elementHeightPercent)
     {
         int positionX = (int)((width * xPositionPercent) / 100.0);       // 현재 화면을 기준으로 계산된 버튼의 상대적 가로 위치
         int positionY = (int)((height * yPositionPercent) / 100.0);    // 현재 화면을 기준으로 계산된 버튼의 상대적 세로 위치
