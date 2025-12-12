@@ -163,12 +163,15 @@ public class MainWindow extends JFrame{
         this.add(continueGameButton);
 
         //버튼 내부 채우지 않도록 하는 메소드
+        continueGameButton.setContentAreaFilled(false);
         campaignButton.setContentAreaFilled(false);
 
         //외곽선 삭제
+        continueGameButton.setBorderPainted(false);
         campaignButton.setBorderPainted(false);
 
         //버튼 선택 시 생성되는 얇은 선 삭제
+        continueGameButton.setFocusPainted(false);
         campaignButton.setFocusPainted(false);
 
         //버튼 호버링 상태 설정
