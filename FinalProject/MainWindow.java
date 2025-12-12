@@ -21,14 +21,17 @@ public class MainWindow extends JFrame{
     //기본 이미지 로딩
     ImageIcon continueDefaultIcon = new ImageIcon("images/continue_default.png");
     ImageIcon campaignDefaultIcon = new ImageIcon("images/campaign_default.png");
+    ImageIcon infinityModeDefaultIcon = new ImageIcon("images/infinity_default.png");
 
     //커서 호버링 이미지 로딩
     ImageIcon continueRollOverIcon = new ImageIcon("images/continue_hover.png");
     ImageIcon campaignRollOverIcon = new ImageIcon("images/campaign_hover.png");
+    ImageIcon infinityModeRollOverIcon = new ImageIcon("images/infinity_hover.png");
 
     //클릭 이미지 로딩
     ImageIcon continuePressedIcon = new ImageIcon("images/continue_hover.png");
     ImageIcon campaignPressedIcon = new ImageIcon("images/campaign_hover.png");
+    ImageIcon infinityModePressedIcon = new ImageIcon("images/infinity_hover.png");
 
     //게임을 플레이 할 수 있도록 하는 객체 생성자 메소드
     public MainWindow()
@@ -73,7 +76,7 @@ public class MainWindow extends JFrame{
         this.studioNewsButton = CreateRelativeButton(continueDefaultIcon, deviceWidth, deviceHeight, 15, 70, 16, 4);
         this.settingButton = CreateRelativeButton(continueDefaultIcon, deviceWidth, deviceHeight, 15, 54, 16, 4);
         this.loadGameButton = CreateRelativeButton(continueDefaultIcon, deviceWidth, deviceHeight, 15, 48, 16, 4);
-        this.infinityModeButton = CreateRelativeButton(continueDefaultIcon, deviceWidth, deviceHeight, 15, 41, 16, 5);
+        this.infinityModeButton = CreateRelativeButton(infinityModeDefaultIcon, deviceWidth, deviceHeight, 15, 41, 16, 5);
         this.campaignButton = CreateRelativeButton(campaignDefaultIcon, deviceWidth, deviceHeight, 15, 35, 16, 4);
         this.continueGameButton = CreateRelativeButton(continueDefaultIcon, deviceWidth, deviceHeight, 15, 26, 16, 4);
 
@@ -165,22 +168,27 @@ public class MainWindow extends JFrame{
         //버튼 내부 채우지 않도록 하는 메소드
         continueGameButton.setContentAreaFilled(false);
         campaignButton.setContentAreaFilled(false);
+        infinityModeButton.setContentAreaFilled(false);
 
         //외곽선 삭제
         continueGameButton.setBorderPainted(false);
         campaignButton.setBorderPainted(false);
+        infinityModeButton.setBorderPainted(false);
 
         //버튼 선택 시 생성되는 얇은 선 삭제
         continueGameButton.setFocusPainted(false);
         campaignButton.setFocusPainted(false);
+        infinityModeButton.setFocusPainted(false);
 
         //버튼 호버링 상태 설정
         continueGameButton.setRolloverIcon(continueRollOverIcon);
         campaignButton.setRolloverIcon(campaignRollOverIcon);
+        infinityModeButton.setRolloverIcon(infinityModeRollOverIcon);
 
         //버튼 클릭 상태 설정
         continueGameButton.setPressedIcon(continuePressedIcon);
         campaignButton.setPressedIcon(campaignPressedIcon);
+        infinityModeButton.setPressedIcon(infinityModePressedIcon);
     }
 
     //요소들을 화면에 맞게 동적으로 비율을 정해서 상대적으로 배치
