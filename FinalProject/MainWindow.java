@@ -26,6 +26,7 @@ public class MainWindow extends JFrame{
     ImageIcon settingDefaultIcon = new ImageIcon("images/setting_default.png");
     ImageIcon studioNewsDefaultIcon = new ImageIcon("images/studio_default.png");
     ImageIcon steamPageDefaultIcon = new ImageIcon("images/steam_default.png");
+    ImageIcon productionListDefaultIcon = new ImageIcon("images/production_default.png");
 
     //커서 호버링 이미지 로딩
     ImageIcon continueRollOverIcon = new ImageIcon("images/continue_hover.png");
@@ -35,6 +36,7 @@ public class MainWindow extends JFrame{
     ImageIcon settingRollOverIcon = new ImageIcon("images/setting_hover.png");
     ImageIcon studioNewsRollOverIcon = new ImageIcon("images/studio_hover.png");
     ImageIcon steamPageRollOverIcon = new ImageIcon("images/steam_hover.png");
+    ImageIcon productionListRollOverIcon = new ImageIcon("images/production_hover.png");
 
     //클릭 이미지 로딩
     ImageIcon continuePressedIcon = new ImageIcon("images/continue_hover.png");
@@ -44,6 +46,7 @@ public class MainWindow extends JFrame{
     ImageIcon settingPressedIcon = new ImageIcon("images/setting_hover.png");
     ImageIcon studioNewsPressedIcon = new ImageIcon("images/studio_hover.png");
     ImageIcon steamPagePressedIcon = new ImageIcon("images/steam_hover.png");
+    ImageIcon productionListPressedIcon = new ImageIcon("images/production_hover.png");
 
     //게임을 플레이 할 수 있도록 하는 객체 생성자 메소드
     public MainWindow()
@@ -83,7 +86,7 @@ public class MainWindow extends JFrame{
     {
         //버튼 생성
         this.exitButton = CreateRelativeButton(continueDefaultIcon, deviceWidth, deviceHeight, 15, 88, 16, 4);
-        this.productionListButton = CreateRelativeButton(continueDefaultIcon, deviceWidth, deviceHeight, 15, 82, 16, 4);
+        this.productionListButton = CreateRelativeButton(productionListDefaultIcon, deviceWidth, deviceHeight, 15, 82, 16, 4);
         this.steamPageButton = CreateRelativeButton(steamPageDefaultIcon, deviceWidth, deviceHeight, 15, 76, 16, 4);
         this.studioNewsButton = CreateRelativeButton(studioNewsDefaultIcon, deviceWidth, deviceHeight, 15, 70, 16, 4);
         this.settingButton = CreateRelativeButton(settingDefaultIcon, deviceWidth, deviceHeight, 15, 54, 16, 4);
@@ -207,6 +210,7 @@ public class MainWindow extends JFrame{
         settingButton.setRolloverIcon(settingRollOverIcon);
         studioNewsButton.setRolloverIcon(studioNewsRollOverIcon);
         steamPageButton.setRolloverIcon(steamPageRollOverIcon);
+        productionListButton.setRolloverIcon(productionListRollOverIcon);
 
         //버튼 클릭 상태 설정
         continueGameButton.setPressedIcon(continuePressedIcon);
@@ -216,6 +220,7 @@ public class MainWindow extends JFrame{
         settingButton.setPressedIcon(settingPressedIcon);
         studioNewsButton.setPressedIcon(studioNewsPressedIcon);
         steamPageButton.setPressedIcon(steamPagePressedIcon);
+        productionListButton.setPressedIcon(productionListPressedIcon);
     }
 
     //요소들을 화면에 맞게 동적으로 비율을 정해서 상대적으로 배치
