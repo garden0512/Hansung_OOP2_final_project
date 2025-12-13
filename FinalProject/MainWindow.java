@@ -84,19 +84,72 @@ public class MainWindow extends JFrame{
         this.setVisible(true);      // 프레임이 보이도록 설정
     }
 
+    //이미지를 버튼 크기에 맞게 비율을 유지하며 조정하는 메소드
+    private ImageIcon ResizeIcon(ImageIcon originalIcon, int targetWidth, int targetHeight)
+    {
+        if(originalIcon == null || originalIcon.getImage() == null)     //이미지가 없다면
+        {
+            return null;        // null반환
+        }
+        Image originalImage = originalIcon.getImage();      //원본 이미지 정보
+        int originalWidth = originalImage.getWidth(null);       //원본 이미지의 가로
+        int originalHeight = originalImage.getHeight(null);     //원본 이미지의 세로
+
+        if(originalWidth <= 0 || originalHeight <= 0 || targetWidth <= 0 || targetHeight <= 0)      //크기 계산이 불가능한 상태라면
+        {
+            return originalIcon;    // 원본 반환
+        }
+
+        //버튼 크기와 이미지 크기의 비율 계산
+        double widthRatio = (double)targetWidth / (double)originalWidth;
+        double heightRatio = (double)targetHeight / (double)originalHeight;
+
+        //비율 유지를 위해 더 작은 비율 선택 후 이미지가 찌그러지지 않도록 조정
+        double ratio = Math.min(widthRatio, heightRatio);
+        int newWidth = (int) (originalWidth * ratio);
+        int newHeight = (int) (originalHeight * ratio);
+
+        //크기가 조절된 이미지 생성
+        Image resizedImage = originalImage.getScaledInstance(newWidth, newHeight, Image.SCALE_SMOOTH);
+        return new ImageIcon(resizedImage);
+    }
+
+    //요소들을 화면에 맞게 동적으로 비율을 정해서 상대적으로 배치
+    private JButton CreateRelativeButton(ImageIcon defaultIcon, ImageIcon rolloverIcon, ImageIcon pressedIcon, int width, int height, int xPositionPercent, int yPositionPercent, int elementWidthPercent, int elementHeightPercent)
+    {
+        int positionX = (int)((width * xPositionPercent) / 100.0);       // 현재 화면을 기준으로 계산된 버튼의 상대적 가로 위치
+        int positionY = (int)((height * yPositionPercent) / 100.0);    // 현재 화면을 기준으로 계산된 버튼의 상대적 세로 위치
+        int elementWidth = (int) ((width * elementWidthPercent) / 100.0);    // 현재 화면을 기준으로 계산된 버튼의 상대적 가로값
+        int elementHeight = (int)((height * elementHeightPercent) / 100.0);    // 현재 화면을 기준으로 계산된 버튼의 상대적 세로값
+        JButton newButton = new JButton(defaultIcon);        // 버튼 컴포넌트 생성
+        newButton.setBounds(positionX, positionY, elementWidth, elementHeight);     // 계산된 값들을 이용해 상대위치 / 크기로 버튼 생성
+
+        //버튼의 상대적 크기에 맞게 모든 아이콘의 크기 조절
+        ImageIcon resizedDefaultIcon = ResizeIcon(defaultIcon, elementWidth, elementHeight);
+        ImageIcon resizedRollOverIcon = ResizeIcon(rolloverIcon, elementWidth, elementHeight);
+        ImageIcon resizedPressedIcon = ResizeIcon(pressedIcon, elementWidth, elementHeight);
+
+        //조정된 아이콘들을 버튼에 적용
+        newButton.setIcon(resizedDefaultIcon);
+        newButton.setRolloverIcon(resizedRollOverIcon);
+        newButton.setPressedIcon(resizedPressedIcon);
+
+        return newButton;       // 생성된 버튼 반환
+    }
+
     //메인화면 버튼들을 생성하는 메소드
     private void CreateButtons()
     {
         //버튼 생성
-        this.exitButton = CreateRelativeButton(exitDefaultIcon, deviceWidth, deviceHeight, 15, 88, 16, 4);
-        this.productionListButton = CreateRelativeButton(productionListDefaultIcon, deviceWidth, deviceHeight, 15, 82, 16, 4);
-        this.steamPageButton = CreateRelativeButton(steamPageDefaultIcon, deviceWidth, deviceHeight, 15, 76, 16, 4);
-        this.studioNewsButton = CreateRelativeButton(studioNewsDefaultIcon, deviceWidth, deviceHeight, 15, 70, 16, 4);
-        this.settingButton = CreateRelativeButton(settingDefaultIcon, deviceWidth, deviceHeight, 15, 54, 16, 4);
-        this.loadGameButton = CreateRelativeButton(loadGameDefaultIcon, deviceWidth, deviceHeight, 15, 48, 16, 4);
-        this.infinityModeButton = CreateRelativeButton(infinityModeDefaultIcon, deviceWidth, deviceHeight, 15, 41, 16, 5);
-        this.campaignButton = CreateRelativeButton(campaignDefaultIcon, deviceWidth, deviceHeight, 15, 35, 16, 4);
-        this.continueGameButton = CreateRelativeButton(continueDefaultIcon, deviceWidth, deviceHeight, 15, 26, 16, 4);
+        this.exitButton = CreateRelativeButton(exitDefaultIcon, exitRollOverIcon, exitPressedIcon, deviceWidth, deviceHeight, 15, 88, 16, 4);
+        this.productionListButton = CreateRelativeButton(productionListDefaultIcon, productionListRollOverIcon, productionListPressedIcon, deviceWidth, deviceHeight, 15, 82, 16, 4);
+        this.steamPageButton = CreateRelativeButton(steamPageDefaultIcon, steamPageRollOverIcon, steamPagePressedIcon, deviceWidth, deviceHeight, 15, 76, 16, 4);
+        this.studioNewsButton = CreateRelativeButton(studioNewsDefaultIcon, studioNewsRollOverIcon, studioNewsPressedIcon, deviceWidth, deviceHeight, 15, 70, 16, 4);
+        this.settingButton = CreateRelativeButton(settingDefaultIcon, settingRollOverIcon, settingPressedIcon, deviceWidth, deviceHeight, 15, 54, 16, 4);
+        this.loadGameButton = CreateRelativeButton(loadGameDefaultIcon, loadGameRollOverIcon, loadGamePressedIcon, deviceWidth, deviceHeight, 15, 48, 16, 4);
+        this.infinityModeButton = CreateRelativeButton(infinityModeDefaultIcon, infinityModeRollOverIcon, infinityModePressedIcon, deviceWidth, deviceHeight, 15, 41, 16, 5);
+        this.campaignButton = CreateRelativeButton(campaignDefaultIcon, campaignRollOverIcon, campaignPressedIcon, deviceWidth, deviceHeight, 15, 35, 16, 4);
+        this.continueGameButton = CreateRelativeButton(continueDefaultIcon, continueRollOverIcon, continuePressedIcon, deviceWidth, deviceHeight, 15, 26, 16, 4);
 
         //반복 작업을 위한 버튼 리스트 생성
         JButton[] mainMenuButtons =
@@ -204,40 +257,6 @@ public class MainWindow extends JFrame{
             button.setBorderPainted(false);     //버튼 외곽선 삭제
             button.setFocusPainted(false);      //버튼 선택 시 생성되는 얇은 선 삭제
         }
-
-        //버튼 호버링 상태 설정
-        continueGameButton.setRolloverIcon(continueRollOverIcon);
-        campaignButton.setRolloverIcon(campaignRollOverIcon);
-        infinityModeButton.setRolloverIcon(infinityModeRollOverIcon);
-        loadGameButton.setRolloverIcon(loadGameRollOverIcon);
-        settingButton.setRolloverIcon(settingRollOverIcon);
-        studioNewsButton.setRolloverIcon(studioNewsRollOverIcon);
-        steamPageButton.setRolloverIcon(steamPageRollOverIcon);
-        productionListButton.setRolloverIcon(productionListRollOverIcon);
-        exitButton.setRolloverIcon(exitRollOverIcon);
-
-        //버튼 클릭 상태 설정
-        continueGameButton.setPressedIcon(continuePressedIcon);
-        campaignButton.setPressedIcon(campaignPressedIcon);
-        infinityModeButton.setPressedIcon(infinityModePressedIcon);
-        loadGameButton.setPressedIcon(loadGamePressedIcon);
-        settingButton.setPressedIcon(settingPressedIcon);
-        studioNewsButton.setPressedIcon(studioNewsPressedIcon);
-        steamPageButton.setPressedIcon(steamPagePressedIcon);
-        productionListButton.setPressedIcon(productionListPressedIcon);
-        exitButton.setPressedIcon(exitPressedIcon);
-    }
-
-    //요소들을 화면에 맞게 동적으로 비율을 정해서 상대적으로 배치
-    private JButton CreateRelativeButton(ImageIcon buttonText, int width, int height, int xPositionPercent, int yPositionPercent, int elementWidthPercent, int elementHeightPercent)
-    {
-        int positionX = (int)((width * xPositionPercent) / 100.0);       // 현재 화면을 기준으로 계산된 버튼의 상대적 가로 위치
-        int positionY = (int)((height * yPositionPercent) / 100.0);    // 현재 화면을 기준으로 계산된 버튼의 상대적 세로 위치
-        int elementWidth = (int) ((width * elementWidthPercent) / 100.0);    // 현재 화면을 기준으로 계산된 버튼의 상대적 가로값
-        int elementHeight = (int)((height * elementHeightPercent) / 100.0);    // 현재 화면을 기준으로 계산된 버튼의 상대적 세로값
-        JButton newButton = new JButton(buttonText);        // 버튼 컴포넌트 생성
-        newButton.setBounds(positionX, positionY, elementWidth, elementHeight);     // 계산된 값들을 이용해 상대위치 / 크기로 버튼 생성
-        return newButton;       // 생성된 버튼 반환
     }
 
     //버튼 기능 메소드들
