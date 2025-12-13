@@ -77,6 +77,18 @@ public class MainWindow extends JFrame{
             this.deviceHeight = graphicsDevice.getDisplayMode().getHeight();    // 현재 프레임의 세로값
         }
 
+        //배경색 설정
+        try
+        {
+            Color backgroundColor = Color.decode("#16191B");
+            this.getContentPane().setBackground(backgroundColor);
+        }
+        catch(NumberFormatException e)
+        {
+            System.err.println("유효하지 않은 색상코드입니다.");
+            this.getContentPane().setBackground(Color.BLACK);
+        }
+
         //기본 UI 생성
         CreateButtons();    // 버튼들 만드는 메소드
 
