@@ -279,7 +279,8 @@ public class MainWindow extends JFrame{
 
     private void OpenCampaignModeSetting()
     {
-        //추후 추가예정
+        new CampaignSelectWindow();
+        this.dispose();
     }
 
     private void OpenInfinityModeSetting()
