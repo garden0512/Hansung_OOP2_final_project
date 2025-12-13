@@ -309,7 +309,8 @@ public class MainWindow extends JFrame{
 
     private void ShowCrewList()
     {
-        //추후 추가예정
+        new ProductionListWindow();
+        this.dispose();
     }
 
     private void Exit()
