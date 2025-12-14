@@ -13,6 +13,9 @@ public class GameFrame extends JFrame{
     private int population;
     private int houseTemperature;
     private int currentTemperature;
+    private int topUIHeight;
+    private TextStore textStore = new TextStore();
+    private GamePanel gamePanel = new GamePanel(textStore);
 
     //인게임 UI 이미지 로딩
     ImageIcon topUI = new ImageIcon("images/InGameUI.png");
@@ -61,17 +64,35 @@ public class GameFrame extends JFrame{
         this.houseTemperature = houseTemperature;       //거주지 온도
         this.currentTemperature = currentTemperature;       //현재 온도
 
-        //상단 UI 그리기
-        DisplayTopUIPanel();
+        DisplayTopUIPanel();        //상단 UI 그리기
+        addGamePanel();     //게임 화면 그리기
 
         //가시성 설정
         this.setVisible(true);      // 프레임이 보이도록 설정
+
+        gamePanel.start();  //게임이 시작하자마자 실행
     }
 
     //글씨 크기 계산하는 메소드
     private int CalculateFontSize(double fontSizePercent)
     {
         return (int) (this.deviceHeight * fontSizePercent / 100.0);
+    }
+
+    private void addGamePanel() {
+        // GamePanel의 위치와 크기를 절대 위치로 설정합니다.
+        int panelY = this.topUIHeight;      //상단 UI 높이부터 시작
+        int panelWidth = this.deviceWidth;      //너비는 화면 전체
+        int panelHeight = this.deviceHeight - panelY;       //높이는 UI부분을 제외한 나머지
+        getContentPane().add(gamePanel); // 제약 조건
+        gamePanel.setBounds(0, panelY, panelWidth, panelHeight);
+
+        // 폰트 크기 계산 및 GamePanel 초기화
+        int preferredFontSize = CalculateFontSize(1);
+        gamePanel.initializeUI(preferredFontSize);
+
+        // GamePanel 내의 컴포넌트들이 크기가 변경된 GamePanel에 맞춰 재배치되도록 요청 (선택적)
+        gamePanel.revalidate();
     }
 
     //이미지를 버튼 크기에 맞게 비율을 유지하며 조정하는 메소드
@@ -113,6 +134,8 @@ public class GameFrame extends JFrame{
         int elementHeight = (int)((deviceHeight * elementHeightPercent) / 100.0);       //구현될 UI의 세로길이 계산
         int positionY = (int)((deviceHeight * yPositionPercent) / 100.0);       //Y축 좌표의 상대적 위치 계산
         int positionX = (deviceWidth / 2) - (elementWidth / 2);     //X축 위치의 상대적 위치 계산
+
+        this.topUIHeight = positionY + elementHeight;
 
         ImageIcon resizedIcon = ResizeIcon(topUI, elementWidth, elementHeight);     //이미지 크기 재조정
         JLabel uiLabel = new JLabel();
