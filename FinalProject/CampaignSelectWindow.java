@@ -8,7 +8,6 @@ import java.awt.GraphicsEnvironment;
 public class CampaignSelectWindow extends JFrame {
     private int deviceWidth;
     private int deviceHeight;
-    private ButtonGroup campaignButtonGroup;        //버튼 그룹 객체 변수
     private JToggleButton lv1Button;
     private JToggleButton lv2Button;
     private JToggleButton lv3Button;
@@ -22,6 +21,7 @@ public class CampaignSelectWindow extends JFrame {
     ImageIcon lv3DefaultIcon = new ImageIcon("images/lv3_default.png");
     ImageIcon lv4DefaultIcon = new ImageIcon("images/lv4_default.png");
     ImageIcon lv5DefaultIcon = new ImageIcon("images/lv5_default.png");
+    ImageIcon backDefaultIcon = new ImageIcon("images/back_default.png");
 
     //선택된 이미지 로딩
     ImageIcon lv1SelectedIcon = new ImageIcon("images/lv1_selected.png");
@@ -29,6 +29,12 @@ public class CampaignSelectWindow extends JFrame {
     ImageIcon lv3SelectedIcon = new ImageIcon("images/lv3_selected.png");
     ImageIcon lv4SelectedIcon = new ImageIcon("images/lv4_selected.png");
     ImageIcon lv5SelectedIcon = new ImageIcon("images/lv5_selected.png");
+
+    //호버링 이미지 로딩
+    ImageIcon backRollOverIcon = new ImageIcon("images/back_hover.png");
+
+    //클릭 이미지 로딩
+    ImageIcon backPressedIcon = new ImageIcon("images/back_hover.png");
 
     public CampaignSelectWindow()
     {
@@ -129,6 +135,32 @@ public class CampaignSelectWindow extends JFrame {
         return newButton;       // 생성된 버튼 반환
     }
 
+    private JButton CreateRelativeButton(ImageIcon defaultIcon, ImageIcon rolloverIcon, ImageIcon pressedIcon, int width, int height, int xPositionPercent, int yPositionPercent, int elementWidthPercent, int elementHeightPercent)
+    {
+        int positionX = (int)((width * xPositionPercent) / 100.0);       // 현재 화면을 기준으로 계산된 버튼의 상대적 가로 위치
+        int positionY = (int)((height * yPositionPercent) / 100.0);    // 현재 화면을 기준으로 계산된 버튼의 상대적 세로 위치
+        int elementWidth = (int) ((width * elementWidthPercent) / 100.0);    // 현재 화면을 기준으로 계산된 버튼의 상대적 가로값
+        int elementHeight = (int)((height * elementHeightPercent) / 100.0);    // 현재 화면을 기준으로 계산된 버튼의 상대적 세로값
+        JButton newButton = new JButton(defaultIcon);        // 버튼 컴포넌트 생성
+        newButton.setBounds(positionX, positionY, elementWidth, elementHeight);     // 계산된 값들을 이용해 상대위치 / 크기로 버튼 생성
+
+        //버튼의 상대적 크기에 맞게 모든 아이콘의 크기 조절
+        ImageIcon resizedDefaultIcon = ResizeIcon(defaultIcon, elementWidth, elementHeight);
+        ImageIcon resizedRollOverIcon = ResizeIcon(rolloverIcon, elementWidth, elementHeight);
+        ImageIcon resizedPressedIcon = ResizeIcon(pressedIcon, elementWidth, elementHeight);
+
+        //조정된 아이콘들을 버튼에 적용
+        newButton.setIcon(resizedDefaultIcon);
+        newButton.setRolloverIcon(resizedRollOverIcon);
+        newButton.setPressedIcon(resizedPressedIcon);
+
+        newButton.setContentAreaFilled(false);     //버튼 내부 채우지 않도록 하는 메소드
+        newButton.setBorderPainted(false);     //버튼 외곽선 삭제
+        newButton.setFocusPainted(false);      //버튼 선택 시 생성되는 얇은 선 삭제
+
+        return newButton;       // 생성된 버튼 반환
+    }
+
     private void DeselectButtons(JToggleButton selectedButton)
     {
         JToggleButton[] campaignButtons =
@@ -157,6 +189,7 @@ public class CampaignSelectWindow extends JFrame {
         this.lv3Button = CreateRelativeButton(lv3DefaultIcon, lv3SelectedIcon, deviceWidth, deviceHeight, 41, 15, 18, 69);
         this.lv4Button = CreateRelativeButton(lv4DefaultIcon, lv4SelectedIcon, deviceWidth, deviceHeight, 59, 15, 18, 69);
         this.lv5Button = CreateRelativeButton(lv5DefaultIcon, lv5SelectedIcon, deviceWidth, deviceHeight, 77, 15, 18, 69);
+        this.backButton = CreateRelativeButton(backDefaultIcon, backRollOverIcon, backPressedIcon, deviceWidth, deviceHeight, 5, 89, 4, 7);
 
         //버튼 기능 오버라이딩
         this.lv1Button.addActionListener(new ActionListener()
@@ -199,6 +232,14 @@ public class CampaignSelectWindow extends JFrame {
                 SelectLv5();
             }
         });
+        this.backButton.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                PressedBackButton();
+            }
+        });
 
         //버튼 추가
         this.add(this.lv1Button);
@@ -206,6 +247,7 @@ public class CampaignSelectWindow extends JFrame {
         this.add(this.lv3Button);
         this.add(this.lv4Button);
         this.add(this.lv5Button);
+        this.add(this.backButton);
     }
 
     //버튼들 메소드
@@ -247,5 +289,11 @@ public class CampaignSelectWindow extends JFrame {
         {
             DeselectButtons(this.lv5Button);
         }
+    }
+
+    private void PressedBackButton()
+    {
+        new MainWindow();
+        this.dispose();
     }
 }
