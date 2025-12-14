@@ -44,6 +44,17 @@ public class CampaignSelectWindow extends JFrame {
     ImageIcon campaignLoadPressedIcon = new ImageIcon("images/campaign_load_hover.png");
     ImageIcon newCampaignPressedIcon = new ImageIcon("images/new_hover.png");
 
+    //레벨별 수치 배열
+    private int[][] levelStats =
+            {
+                    //앞에서부터 차례로 석탄, 식량, 인구수, 거주지 온도 수준, 현재 온도임
+                    {400, 100, 100, 1, -10},
+                    {300, 50, 100, 1, -10},
+                    {200, 50, 150, 2, -20},
+                    {150, 50, 200, 3, -30},
+                    {100, 50, 250, 4, -40}
+            };
+
     public CampaignSelectWindow()
     {
         super("캠페인 모드 선택 창");
@@ -336,7 +347,30 @@ public class CampaignSelectWindow extends JFrame {
 
     private void PressedNewCampaignButton()
     {
-        new GameFrame();
+        //선택한 버튼에 따른 레벨
+        int selectedLevel = 0;
+        if(this.lv1Button.isSelected())
+        {
+            selectedLevel = 0;
+        }
+        else if(this.lv2Button.isSelected())
+        {
+            selectedLevel = 1;
+        }
+        else if(this.lv3Button.isSelected())
+        {
+            selectedLevel = 2;
+        }
+        else if(this.lv4Button.isSelected())
+        {
+            selectedLevel = 3;
+        }
+        else if(this.lv5Button.isSelected())
+        {
+            selectedLevel = 4;
+        }
+        int[] stats = levelStats[selectedLevel];    //선택한 레벨의 기본 자원 수치 가져오기
+        new GameFrame(stats[0], stats[1], stats[2], stats[3], stats[4]);        //자원량 전달하는 생성자
         this.dispose();
     }
 }
