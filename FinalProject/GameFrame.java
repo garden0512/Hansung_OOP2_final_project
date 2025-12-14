@@ -54,18 +54,24 @@ public class GameFrame extends JFrame{
             this.getContentPane().setBackground(Color.BLACK);
         }
 
-        //상단 UI 그리기
-        DisplayTopUIPanel();
-
-        //가시성 설정
-        this.setVisible(true);      // 프레임이 보이도록 설정
-
         //받아온 매개변수 값을 클래스 내부 변수에 저장
         this.coalAmount = coalAmount;       //석탄 양
         this.foodAmount = foodAmount;       //식량 양
         this.population = population;       //인구수
         this.houseTemperature = houseTemperature;       //거주지 온도
         this.currentTemperature = currentTemperature;       //현재 온도
+
+        //상단 UI 그리기
+        DisplayTopUIPanel();
+
+        //가시성 설정
+        this.setVisible(true);      // 프레임이 보이도록 설정
+    }
+
+    //글씨 크기 계산하는 메소드
+    private int CalculateFontSize(double fontSizePercent)
+    {
+        return (int) (this.deviceHeight * fontSizePercent / 100.0);
     }
 
     //이미지를 버튼 크기에 맞게 비율을 유지하며 조정하는 메소드
@@ -103,10 +109,10 @@ public class GameFrame extends JFrame{
         int elementWidthPercent = 65;      //화면 가로에서 차지할 비율
         int elementHeightPercent = 16;     //화면 세로에서 차지할 비율
         int yPositionPercent = 0;   //상단에서 떨어질 비율
-        int elementWidth = (int) ((deviceWidth * elementWidthPercent) / 100.0);
-        int elementHeight = (int)((deviceHeight * elementHeightPercent) / 100.0);
-        int positionY = (int)((deviceHeight * yPositionPercent) / 100.0);
-        int positionX = (deviceWidth / 2) - (elementWidth / 2);
+        int elementWidth = (int) ((deviceWidth * elementWidthPercent) / 100.0);     //구현될 UI의 가로길이 계산
+        int elementHeight = (int)((deviceHeight * elementHeightPercent) / 100.0);       //구현될 UI의 세로길이 계산
+        int positionY = (int)((deviceHeight * yPositionPercent) / 100.0);       //Y축 좌표의 상대적 위치 계산
+        int positionX = (deviceWidth / 2) - (elementWidth / 2);     //X축 위치의 상대적 위치 계산
 
         ImageIcon resizedIcon = ResizeIcon(topUI, elementWidth, elementHeight);     //이미지 크기 재조정
         JLabel uiLabel = new JLabel();
@@ -123,5 +129,70 @@ public class GameFrame extends JFrame{
         }
 
         this.add(uiLabel);      //프레임에 추가
+        DisplayStatsOnUI(positionX, positionY, elementWidth, elementHeight);
+    }
+
+    private void DisplayStatsOnUI(int uiX, int uiY, int uiWidth, int uiHeight)
+    {
+        int subFontSize = CalculateFontSize(2);     //서브 글씨크기
+        int mainFontSize = CalculateFontSize(6);    //메인 글씨크기
+        Font subStatFont = new Font(Font.SANS_SERIF, Font.BOLD, subFontSize);
+        Font mainStatFont = new Font(Font.SANS_SERIF, Font.BOLD, mainFontSize);
+
+        Color textColor = Color.WHITE;
+
+        String[] statTexts =
+                {
+                        "석탄 : " + String.format("%04d", this.coalAmount),
+                        "식량 :  " + String.format("%04d", this.foodAmount),
+                        "인구 : " + String.format("%04d", this.population),
+                        "집 온도 :  " + String.format("%04d", this.houseTemperature),
+                        "현재 온도",
+                        this.currentTemperature + "℃"
+                };
+
+        double[][] relativePositions =
+                {
+                        {6.5, 4.0, 15.0, 0.0, 0.0},     //석탄
+                        {26.0, 4.0, 15.0, 0.0, 0.0},     //식량
+                        {63.0, 4.0, 15.0, 0.0, 0.0},     //인구
+                        {82.0, 4.0, 20.0, 0.0, 0.0},     //집 온도
+                        {45.0, 4.0, 12.0, 0.0, 0.0},     //현재온도 글씨
+                        {41.0, 33.0, 16.0, 1.0, 1.0},     //현재 온도 숫자로
+                };
+        for(int i = 0; i < statTexts.length; i++)
+        {
+            JLabel newLabel;
+            int alignment = (int)relativePositions[i][4];
+            if(i==5)
+            {
+                newLabel = new JLabel(statTexts[i]);
+                newLabel.setFont(mainStatFont);
+            }
+            else
+            {
+                newLabel = new JLabel(statTexts[i]);
+                newLabel.setFont(subStatFont);
+            }
+
+            int labelX = uiX + (int) (uiWidth * relativePositions[i][0] / 100.0);
+            int labelY = uiY + (int) (uiHeight * relativePositions[i][1] / 100.0);
+            int labelW = (int) (uiWidth * relativePositions[i][2] / 100.0);
+            int labelH = (int) (uiHeight * 35 / 100.0);
+
+            newLabel.setBounds(labelX, labelY, labelW, labelH);
+            newLabel.setForeground(textColor);
+
+            if (alignment == 1) {
+                newLabel.setHorizontalAlignment(SwingConstants.CENTER);
+            } else if (alignment == 2) {
+                newLabel.setHorizontalAlignment(SwingConstants.RIGHT);
+            } else {
+                newLabel.setHorizontalAlignment(SwingConstants.LEFT);
+            }
+
+            this.add(newLabel);
+        }
+
     }
 }
