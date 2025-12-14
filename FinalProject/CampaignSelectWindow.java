@@ -14,6 +14,8 @@ public class CampaignSelectWindow extends JFrame {
     private JToggleButton lv4Button;
     private JToggleButton lv5Button;
     private JButton backButton;
+    private JButton campaignLoadButton;
+    private JButton newCampaignButton;
 
     //기본 이미지 로딩
     ImageIcon lv1DefaultIcon = new ImageIcon("images/lv1_default.png");
@@ -22,6 +24,8 @@ public class CampaignSelectWindow extends JFrame {
     ImageIcon lv4DefaultIcon = new ImageIcon("images/lv4_default.png");
     ImageIcon lv5DefaultIcon = new ImageIcon("images/lv5_default.png");
     ImageIcon backDefaultIcon = new ImageIcon("images/back_default.png");
+    ImageIcon campaignLoadDefaultIcon = new ImageIcon("images/campaign_load_default.png");
+    ImageIcon newCampaignDefaultIcon = new ImageIcon("images/new_default.png");
 
     //선택된 이미지 로딩
     ImageIcon lv1SelectedIcon = new ImageIcon("images/lv1_selected.png");
@@ -32,9 +36,13 @@ public class CampaignSelectWindow extends JFrame {
 
     //호버링 이미지 로딩
     ImageIcon backRollOverIcon = new ImageIcon("images/back_hover.png");
+    ImageIcon campaignLoadRollOverIcon = new ImageIcon("images/campaign_load_hover.png");
+    ImageIcon newCampaignRollOverIcon = new ImageIcon("images/new_hover.png");
 
     //클릭 이미지 로딩
     ImageIcon backPressedIcon = new ImageIcon("images/back_hover.png");
+    ImageIcon campaignLoadPressedIcon = new ImageIcon("images/campaign_load_hover.png");
+    ImageIcon newCampaignPressedIcon = new ImageIcon("images/new_hover.png");
 
     public CampaignSelectWindow()
     {
@@ -190,6 +198,8 @@ public class CampaignSelectWindow extends JFrame {
         this.lv4Button = CreateRelativeButton(lv4DefaultIcon, lv4SelectedIcon, deviceWidth, deviceHeight, 59, 15, 18, 69);
         this.lv5Button = CreateRelativeButton(lv5DefaultIcon, lv5SelectedIcon, deviceWidth, deviceHeight, 77, 15, 18, 69);
         this.backButton = CreateRelativeButton(backDefaultIcon, backRollOverIcon, backPressedIcon, deviceWidth, deviceHeight, 5, 89, 4, 7);
+        this.campaignLoadButton = CreateRelativeButton(campaignLoadDefaultIcon, campaignLoadRollOverIcon, campaignLoadPressedIcon, deviceWidth, deviceHeight, 12, 90, 13, 5);
+        this.newCampaignButton = CreateRelativeButton(newCampaignDefaultIcon, newCampaignRollOverIcon, newCampaignPressedIcon, deviceWidth, deviceHeight, 28, 90, 13, 5);
 
         //버튼 기능 오버라이딩
         this.lv1Button.addActionListener(new ActionListener()
@@ -240,6 +250,22 @@ public class CampaignSelectWindow extends JFrame {
                 PressedBackButton();
             }
         });
+        this.campaignLoadButton.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                PressedCampaignLoadButton();
+            }
+        });
+        this.newCampaignButton.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                PressedNewCampaignButton();
+            }
+        });
 
         //버튼 추가
         this.add(this.lv1Button);
@@ -248,6 +274,8 @@ public class CampaignSelectWindow extends JFrame {
         this.add(this.lv4Button);
         this.add(this.lv5Button);
         this.add(this.backButton);
+        this.add(this.campaignLoadButton);
+        this.add(this.newCampaignButton);
     }
 
     //버튼들 메소드
@@ -295,5 +323,15 @@ public class CampaignSelectWindow extends JFrame {
     {
         new MainWindow();
         this.dispose();
+    }
+
+    private void PressedCampaignLoadButton()
+    {
+        //추후 추가예정
+    }
+
+    private void PressedNewCampaignButton()
+    {
+        //추후 추가예정
     }
 }
