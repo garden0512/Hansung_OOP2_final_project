@@ -169,6 +169,7 @@ public class CampaignSelectWindow extends JFrame {
         return newButton;       // 생성된 버튼 반환
     }
 
+    //버튼 하나만 선택할 수 있도록 하는 메소드
     private void DeselectButtons(JToggleButton selectedButton)
     {
         JToggleButton[] campaignButtons =
@@ -186,6 +187,20 @@ public class CampaignSelectWindow extends JFrame {
                 button.setSelected(false);
             }
         }
+        UpdateNewCampaignButtonState();
+    }
+
+    // 게임 시작하기 버튼의 상태 병경 메소드
+    private void UpdateNewCampaignButtonState()
+    {
+        boolean isAnySelected =
+                this.lv1Button.isSelected() ||
+                this.lv2Button.isSelected() ||
+                this.lv3Button.isSelected() ||
+                this.lv4Button.isSelected() ||
+                this.lv5Button.isSelected();
+        //하나라도 선택이 되어있다면 버튼 활성화
+        this.newCampaignButton.setEnabled(isAnySelected);
     }
 
     //캠페인 모드를 선택하는 버튼들 생성
@@ -200,6 +215,10 @@ public class CampaignSelectWindow extends JFrame {
         this.backButton = CreateRelativeButton(backDefaultIcon, backRollOverIcon, backPressedIcon, deviceWidth, deviceHeight, 5, 89, 4, 7);
         this.campaignLoadButton = CreateRelativeButton(campaignLoadDefaultIcon, campaignLoadRollOverIcon, campaignLoadPressedIcon, deviceWidth, deviceHeight, 12, 90, 13, 5);
         this.newCampaignButton = CreateRelativeButton(newCampaignDefaultIcon, newCampaignRollOverIcon, newCampaignPressedIcon, deviceWidth, deviceHeight, 28, 90, 13, 5);
+
+        //newCampaignButton 을 비활성화 상태로 초기화
+        this.newCampaignButton.setEnabled(false);
+        this.newCampaignButton.setDisabledIcon(newCampaignDefaultIcon);
 
         //버튼 기능 오버라이딩
         this.lv1Button.addActionListener(new ActionListener()
@@ -281,42 +300,27 @@ public class CampaignSelectWindow extends JFrame {
     //버튼들 메소드
     private void SelectLv1()
     {
-        if(this.lv1Button.isSelected())
-        {
-            DeselectButtons(this.lv1Button);
-        }
+        DeselectButtons(this.lv1Button);
     }
 
     private void SelectLv2()
     {
-        if(this.lv2Button.isSelected())
-        {
-            DeselectButtons(this.lv2Button);
-        }
+        DeselectButtons(this.lv2Button);
     }
 
     private void SelectLv3()
     {
-        if(this.lv3Button.isSelected())
-        {
-            DeselectButtons(this.lv3Button);
-        }
+        DeselectButtons(this.lv3Button);
     }
 
     private void SelectLv4()
     {
-        if(this.lv4Button.isSelected())
-        {
-            DeselectButtons(this.lv4Button);
-        }
+        DeselectButtons(this.lv4Button);
     }
 
     private void SelectLv5()
     {
-        if(this.lv5Button.isSelected())
-        {
-            DeselectButtons(this.lv5Button);
-        }
+        DeselectButtons(this.lv5Button);
     }
 
     private void PressedBackButton()
@@ -332,6 +336,7 @@ public class CampaignSelectWindow extends JFrame {
 
     private void PressedNewCampaignButton()
     {
-        //추후 추가예정
+        new GameFrame();
+        this.dispose();
     }
 }
