@@ -1,11 +1,14 @@
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.JLabel;
+import javax.swing.SwingUtilities;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.List;
 
 public class GamePanel extends JPanel {
     private JLabel fallingLabel = new JLabel("");
@@ -72,7 +75,7 @@ public class GamePanel extends JPanel {
         {
             this.setBackground(Color.DARK_GRAY);
             this.setLayout(null);
-            fallingLabel.setSize(200, 50);
+            fallingLabel.setSize(200, 100);
             fallingLabel.setLocation(100, 100);
             fallingLabel.setVisible(false);
             add(fallingLabel);
@@ -81,7 +84,7 @@ public class GamePanel extends JPanel {
 
     class InputPanel extends JPanel
     {
-        private JTextField inputText = new JTextField(10);
+        private JTextField inputText = new JTextField(20);
         public InputPanel()
         {
             this.setBackground(Color.GRAY);

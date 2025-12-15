@@ -68,6 +68,21 @@ public class MainWindow extends JFrame{
             graphicsDevice.setFullScreenWindow(this);   // 이 프레임이 풀스크린으로 열리도록 함
             this.deviceWidth = graphicsDevice.getDisplayMode().getWidth();      // 현재 프레임의 가로값
             this.deviceHeight = graphicsDevice.getDisplayMode().getHeight();    // 현재 프레임의 세로값
+
+            //16:9비율로 화면 크기 재계산
+            Dimension scaleDim = getScaledDimensions16x9(this.deviceWidth, this.deviceHeight);
+            int finalWidth = scaleDim.width;
+            int finalHeight = scaleDim.height;
+
+            //프레임 크기 및 위치 설정
+            this.setSize(finalWidth, finalHeight);
+            int x = (this.deviceWidth - finalWidth) / 2;
+            int y = (this.deviceHeight - finalHeight) / 2;
+            this.setLocation(x, y);
+
+            //변수 값 바꿔주기
+            this.deviceWidth = finalWidth;
+            this.deviceHeight = finalHeight;
         }
         else    // 풀스크린을 지원하지 않는다면
         {
@@ -75,6 +90,11 @@ public class MainWindow extends JFrame{
             this.setExtendedState(JFrame.MAXIMIZED_BOTH);       // 가로, 세로 전부 최대치로 열리도록 함
             this.deviceWidth = graphicsDevice.getDisplayMode().getWidth();      // 현재 프레임의 가로값
             this.deviceHeight = graphicsDevice.getDisplayMode().getHeight();    // 현재 프레임의 세로값
+
+            Dimension scaledDim = getScaledDimensions16x9(this.deviceWidth, this.deviceHeight);
+            this.deviceWidth = scaledDim.width;
+            this.deviceHeight = scaledDim.height;
+            this.setSize(this.deviceWidth, this.deviceHeight);
         }
 
         //배경색 설정
@@ -94,6 +114,19 @@ public class MainWindow extends JFrame{
 
         //가시성 설정
         this.setVisible(true);      // 프레임이 보이도록 설정
+    }
+
+    private static Dimension getScaledDimensions16x9(int screenWidth, int screenHeight)
+    {
+        double targetRatio = 16.0 / 9.0;
+        int scaledWidth = screenWidth;
+        int scaledHeight = (int) (screenWidth / targetRatio);
+
+        if (scaledHeight > screenHeight) {
+            scaledHeight = screenHeight;
+            scaledWidth = (int) (screenHeight * targetRatio);
+        }
+        return new Dimension(scaledWidth, scaledHeight);
     }
 
     //이미지를 버튼 크기에 맞게 비율을 유지하며 조정하는 메소드
