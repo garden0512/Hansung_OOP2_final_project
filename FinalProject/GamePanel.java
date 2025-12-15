@@ -1,25 +1,31 @@
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.JLabel;
+import javax.swing.Timer;
 import javax.swing.SwingUtilities;
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Font;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.Map;
+import java.util.Random;
 
-public class GamePanel extends JPanel {
-    private JLabel fallingLabel = new JLabel("");
+public class GamePanel extends JPanel
+{
+//    private JLabel fallingLabel = new JLabel("");
+    private Map<String, FallingWord> activeWords = new ConcurrentHashMap<>();
     private GroundPanel groundPanel = new GroundPanel();
-    private TextStore textStore = null;
-    private FallingThread fallingThread = new FallingThread();
+    private TextStore textStore;
+    private GameFrame gameFrame;
+    private int preferredFontSize = 30;
+    private int maxFallingWords = 30;       //최대 단어 개수
+    private int coalBonus = 100;
+    private int foodBonus = 100;
 
-    // 생성자 시그니처를 유지하되, scorePanel을 Object로 받도록 변경하여 유연하게 대처
-    public GamePanel(TextStore textStore)
+    public GamePanel(TextStore textStore, GameFrame gameFrame)      //생성자
     {
         this.textStore = textStore;
+        this.gameFrame = gameFrame;
         this.setBackground(Color.BLACK);
         setLayout(new BorderLayout());
         add(new InputPanel(), BorderLayout.SOUTH);
@@ -27,44 +33,129 @@ public class GamePanel extends JPanel {
     }
 
     // 폰트 설정 메소드 유지
-    public void initializeUI(int preferredFontSize) {
-        fallingLabel.setFont(new Font(Font.SANS_SERIF, Font.BOLD, preferredFontSize));
-        fallingLabel.setForeground(Color.BLACK);
-
-        // InputPanel의 JTextField에도 폰트 설정
-        ((InputPanel)getComponent(0)).inputText.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, preferredFontSize));
+    public void initializeUI(int preferredFontSize)     //폰트 설정 메소드 유지 및 preferredFontSize 저장
+    {
+        this.preferredFontSize = preferredFontSize;
+        JTextField inputText = ((InputPanel)getComponent(0)).inputText;
+        inputText.setFont(new Font(Font.SANS_SERIF, Font.BOLD, preferredFontSize));
     }
 
     public void start()
     {
-        fallingLabel.setVisible(true);
-        String text = textStore.get();
-        fallingLabel.setText(text);
+        Timer wordGeneratorTimer = new Timer(1000, new ActionListener()     //1초마다 새 단어 생성
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                GenerateNewWord();
+            }
+        });
+        wordGeneratorTimer.start();
+        Timer resourceConsumptionTimer = new Timer(2000, new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                gameFrame.ConsumeResources();
+            }
+        });
+        resourceConsumptionTimer.start();
+    }
 
-        if (!fallingThread.isAlive()) {
-            fallingThread.start();
+    private void GenerateNewWord()      //단어 생성 로직
+    {
+        if(activeWords.size() < maxFallingWords)
+        {
+            String text = textStore.get();
+            if(text != null && !text.isEmpty() && !activeWords.containsKey(text))
+            {
+                boolean isCoalWord = new Random().nextBoolean();    //단어의 종류를 랜덤하게 정함.
+                //GroundPanel의 크기를 기준으로 랜덤한 위치 계산
+                int panelWidth = groundPanel.getWidth();
+                int x = (int)(Math.random() * (panelWidth * 0.8));
+                int y = 50;
+
+                Font wordFont = new Font(Font.SANS_SERIF, Font.BOLD, preferredFontSize);
+                FallingWord word = new FallingWord(text, x, y, wordFont, isCoalWord);
+                SwingUtilities.invokeLater(()->
+                {
+                    groundPanel.add(word);
+                    groundPanel.setComponentZOrder(word, 0);    //가장 위에 표시하기
+                    groundPanel.revalidate();
+                    groundPanel.repaint();
+                });
+                //Map에 등록 및 스레드 시작
+                activeWords.put(text, word);
+                new Thread(word).start();
+            }
         }
     }
 
-    class FallingThread extends Thread
+    public void RemoveWord(FallingWord word)
     {
+        SwingUtilities.invokeLater(()->
+        {
+            groundPanel.remove(word);
+            activeWords.remove(word.getText());
+            groundPanel.revalidate();
+            groundPanel.repaint();
+            GenerateNewWord();      //단어가 사라지면 새 단어 생성
+        });
+    }
+
+    //개별 단어의 움직임을 처리하는 멀티스레드 클래스
+    class FallingWord extends JLabel implements Runnable
+    {
+        private boolean isFalling = true;
+        private boolean isCoalWord;
+
+        public FallingWord(String text, int x, int y, Font wordFont, boolean isCoalWord)
+        {
+            super(text);
+            this.isCoalWord = isCoalWord;
+            this.setFont(wordFont);
+            this.setForeground(isCoalWord ? Color.BLACK : new Color(0x966147));
+            this.setSize(200, 50);
+            this.setLocation(x, y);
+            this.setVisible(true);
+        }
+
+        public void StopFalling()
+        {
+            this.isFalling = false;
+        }
+
+        public boolean isCoalWord()
+        {
+            return isCoalWord;
+        }
+
         @Override
         public void run()
         {
-            while(true)
+            Thread.currentThread().setName("FallingWord - " + getText());
+            while(isFalling)
             {
                 try
                 {
-                    sleep(300);
-                    int x = fallingLabel.getX();
-                    int y = fallingLabel.getY();
-                    fallingLabel.setLocation(x, y + 10);
+                    Thread.sleep(300);
+                    SwingUtilities.invokeLater(()->
+                    {
+                        int newY = getY() + 10;
+                        setLocation(getX(), newY);
+                        if(newY > groundPanel.getHeight() - getHeight() - 10)   //여유있게 바닥에 닿았는지 확인
+                        {
+                            StopFalling();
+                            RemoveWord(this);
+                        }
+                    });
                 }
-                catch (InterruptedException e)
+                catch(InterruptedException e)
                 {
-                    e.printStackTrace();
+                    Thread.currentThread().interrupt();
+                    StopFalling();
+                    break;
                 }
-
             }
         }
     }
@@ -75,10 +166,6 @@ public class GamePanel extends JPanel {
         {
             this.setBackground(Color.DARK_GRAY);
             this.setLayout(null);
-            fallingLabel.setSize(200, 100);
-            fallingLabel.setLocation(100, 100);
-            fallingLabel.setVisible(false);
-            add(fallingLabel);
         }
     }
 
@@ -96,15 +183,22 @@ public class GamePanel extends JPanel {
                 {
                     JTextField textField = (JTextField) (e.getSource());
                     String inputText = textField.getText();
-                    if(inputText.equals(fallingLabel.getText()))
+                    FallingWord matchedWord = activeWords.get(inputText);
+                    if(matchedWord != null)
                     {
-                        String text = textStore.get();
-                        fallingLabel.setText(text);
-                        fallingLabel.setLocation((int)(Math.random() * groundPanel.getWidth() * 0.8), 50);  //X위치를 랜덤으로 설정
+                        matchedWord.StopFalling();
+                        if(matchedWord.isCoalWord())
+                        {
+                            gameFrame.AddCoal(coalBonus);
+                        }
+                        else
+                        {
+                            gameFrame.AddFood(foodBonus);
+                        }
+                        RemoveWord(matchedWord);
                         textField.setText("");
                     }
                 }
-
             });
         }
     }

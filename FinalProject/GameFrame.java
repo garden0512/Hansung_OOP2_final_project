@@ -4,18 +4,26 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.GraphicsEnvironment;
 import java.awt.GraphicsDevice;
+import java.util.concurrent.atomic.AtomicInteger;       //멀티쓰레드 환경에서 안전하게 변수를 바꾸기 위해 추가
 
 public class GameFrame extends JFrame{
     private int deviceWidth;
     private int deviceHeight;
-    private int coalAmount;
-    private int foodAmount;
+    private AtomicInteger coalAmount;       //쓰레드에서 바뀌는 변수
+    private AtomicInteger foodAmount;       //쓰레드에서 바뀌는 변수
     private int population;
     private int houseTemperature;
     private int currentTemperature;
     private int topUIHeight;
     private TextStore textStore = new TextStore();
-    private GamePanel gamePanel = new GamePanel(textStore);
+    private GamePanel gamePanel;
+    //각 자원 및 수치 라벨
+    private JLabel coalLabel;
+    private JLabel foodLabel;
+    private JLabel populationLabel;
+    private JLabel houseTemperatureLabel;
+    private JLabel currentTemperatureStringLabel;
+    private JLabel currentTemperatureLabel;
 
     //인게임 UI 이미지 로딩
     ImageIcon topUI = new ImageIcon("images/InGameUI.png");
@@ -78,11 +86,13 @@ public class GameFrame extends JFrame{
         }
 
         //받아온 매개변수 값을 클래스 내부 변수에 저장
-        this.coalAmount = coalAmount;       //석탄 양
-        this.foodAmount = foodAmount;       //식량 양
+        this.coalAmount = new AtomicInteger(coalAmount);       //석탄 양
+        this.foodAmount = new AtomicInteger(foodAmount);       //식량 양
         this.population = population;       //인구수
         this.houseTemperature = houseTemperature;       //거주지 온도
         this.currentTemperature = currentTemperature;       //현재 온도
+
+        this.gamePanel = new GamePanel(textStore, this);
 
         DisplayTopUIPanel();        //상단 UI 그리기
         addGamePanel();     //게임 화면 그리기
@@ -90,8 +100,81 @@ public class GameFrame extends JFrame{
         //가시성 설정
         this.setVisible(true);      // 프레임이 보이도록 설정
 
-        gamePanel.start();  //게임이 시작하자마자 실행
+        this.gamePanel.start();  //게임이 시작하자마자 실행
     }
+
+    //GamePanel이 자원 상태를 업데이트 하도록 공개시킨 메소드--------------------------
+    public int getPopulation()
+    {
+        return this.population;
+    }
+
+    public int getHouseTemperature()
+    {
+        return this.houseTemperature;
+    }
+
+    public int getCurrentTemperature()
+    {
+        return this.currentTemperature;
+    }
+
+    public void AddCoal(int amount)
+    {
+        this.coalAmount.addAndGet(amount);
+        UpdateStatsUI();
+    }
+
+    public void AddFood(int amount)
+    {
+        this.foodAmount.addAndGet(amount);
+        UpdateStatsUI();
+    }
+
+    public void ConsumeResources()      //현실시간으로 2초동안 소비되는 자원의 양을 결정하고 호출
+    {
+        double coalConsumptionRate = ((double)population / 100.0) * ((double)currentTemperature / -10.0);       //석탄 소비량
+        int coalConsumed = (int) Math.max(1, Math.round(coalConsumptionRate));      //최소 소비량을 1로 보장
+        int foodConsumed = Math.max(1, population / 10);    //식량 소비량
+        //자원 소비
+        this.coalAmount.updateAndGet(current -> Math.max(0, current - coalConsumed));
+        this.foodAmount.updateAndGet(current -> Math.max(0, current - foodConsumed));
+        UpdateStatsUI();
+        //자원 부족 시 게임오버 처리 로직 추가 예정
+    }
+
+    public void UpdateStatsUI()     //UI 업데이트 전용 메소드
+    {
+        SwingUtilities.invokeLater(() ->
+        {
+           if(coalLabel != null)
+           {
+               this.coalLabel.setText("석탄 : " + String.format("%04d", this.coalAmount.get()));
+           }
+           if(foodLabel != null)
+           {
+               this.foodLabel.setText("식량 :  " + String.format("%04d", this.foodAmount.get()));
+           }
+           if(populationLabel != null)
+           {
+               this.populationLabel.setText("인구 : " + String.format("%04d", this.population));
+           }
+           if(houseTemperatureLabel != null)
+           {
+               this.houseTemperatureLabel.setText("집 온도 :  " + String.format("%04d", this.houseTemperature));
+           }
+           if(currentTemperatureLabel != null)
+           {
+               this.currentTemperatureLabel.setText(this.currentTemperature + "℃");
+           }
+           if(currentTemperatureStringLabel != null)
+           {
+               this.currentTemperatureStringLabel.setText("현재온도");
+           }
+        });
+    }
+
+    //---------------------------------------------------
 
     //글씨 크기 계산하는 메소드
     private int CalculateFontSize(double fontSizePercent)
@@ -188,7 +271,7 @@ public class GameFrame extends JFrame{
         DisplayStatsOnUI(positionX, positionY, elementWidth, elementHeight);
     }
 
-    private void DisplayStatsOnUI(int uiX, int uiY, int uiWidth, int uiHeight)
+    private void DisplayStatsOnUI(int uiX, int uiY, int uiWidth, int uiHeight)      //레이블 생성 및 멤버변수에 저장
     {
         int subFontSize = CalculateFontSize(2);     //서브 글씨크기
         int mainFontSize = CalculateFontSize(6);    //메인 글씨크기
@@ -197,15 +280,15 @@ public class GameFrame extends JFrame{
 
         Color textColor = Color.WHITE;
 
-        String[] statTexts =
-                {
-                        "석탄 : " + String.format("%04d", this.coalAmount),
-                        "식량 :  " + String.format("%04d", this.foodAmount),
-                        "인구 : " + String.format("%04d", this.population),
-                        "집 온도 :  " + String.format("%04d", this.houseTemperature),
-                        "현재 온도",
-                        this.currentTemperature + "℃"
-                };
+//        String[] statTexts =
+//                {
+//                        "석탄 : " + String.format("%04d", this.coalAmount),
+//                        "식량 :  " + String.format("%04d", this.foodAmount),
+//                        "인구 : " + String.format("%04d", this.population),
+//                        "집 온도 :  " + String.format("%04d", this.houseTemperature),
+//                        "현재 온도",
+//                        this.currentTemperature + "℃"
+//                };
 
         double[][] relativePositions =
                 {
@@ -216,19 +299,38 @@ public class GameFrame extends JFrame{
                         {45.0, 4.0, 12.0, 0.0, 0.0},     //현재온도 글씨
                         {41.0, 33.0, 16.0, 1.0, 1.0},     //현재 온도 숫자로
                 };
-        for(int i = 0; i < statTexts.length; i++)
+        for(int i = 0; i < relativePositions.length; i++)
         {
             JLabel newLabel;
             int alignment = (int)relativePositions[i][4];
             if(i==5)
             {
-                newLabel = new JLabel(statTexts[i]);
+                newLabel = new JLabel();
                 newLabel.setFont(mainStatFont);
+                currentTemperatureLabel = newLabel;
             }
             else
             {
-                newLabel = new JLabel(statTexts[i]);
+                newLabel = new JLabel();
                 newLabel.setFont(subStatFont);
+                switch(i)
+                {
+                    case 0:
+                        coalLabel = newLabel;
+                        break;
+                    case 1:
+                        foodLabel = newLabel;
+                        break;
+                    case 2:
+                        populationLabel = newLabel;
+                        break;
+                    case 3:
+                        houseTemperatureLabel = newLabel;
+                        break;
+                    case 4:
+                        currentTemperatureStringLabel = newLabel;
+                        break;
+                }
             }
 
             int labelX = uiX + (int) (uiWidth * relativePositions[i][0] / 100.0);
@@ -238,17 +340,22 @@ public class GameFrame extends JFrame{
 
             newLabel.setBounds(labelX, labelY, labelW, labelH);
             newLabel.setForeground(textColor);
-
-            if (alignment == 1) {
+            //폰트 정렬 방식
+            if (alignment == 1)     //중앙정렬
+            {
                 newLabel.setHorizontalAlignment(SwingConstants.CENTER);
-            } else if (alignment == 2) {
+            }
+            else if (alignment == 2)        //오른쪽 정렬
+            {
                 newLabel.setHorizontalAlignment(SwingConstants.RIGHT);
-            } else {
+            }
+            else        //왼쪽정렬
+            {
                 newLabel.setHorizontalAlignment(SwingConstants.LEFT);
             }
 
             this.add(newLabel);
         }
-
+        UpdateStatsUI();
     }
 }
