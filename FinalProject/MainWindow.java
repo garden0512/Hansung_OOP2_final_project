@@ -328,7 +328,8 @@ public class MainWindow extends JFrame{
 
     private void OpenSetting()
     {
-        //추후 추가예정
+        new SettingWindow();
+        this.dispose();
     }
 
     private void ShowStudioNewsPage()
