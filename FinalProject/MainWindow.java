@@ -339,7 +339,7 @@ public class MainWindow extends JFrame{
 
     private void OpenRankingPage()
     {
-        new RankingWindow(deviceWidth, deviceHeight);
+        new RankWindow(deviceWidth, deviceHeight);
     }
 
     private void ShowCrewList()
