@@ -12,7 +12,6 @@ import java.util.Random;
 
 public class GamePanel extends JPanel
 {
-//    private JLabel fallingLabel = new JLabel("");
     private Map<String, FallingWord> activeWords = new ConcurrentHashMap<>();
     private GroundPanel groundPanel = new GroundPanel();
     private TextStore textStore;
@@ -21,6 +20,8 @@ public class GamePanel extends JPanel
     private int maxFallingWords = 30;       //최대 단어 개수
     private int coalBonus = 100;
     private int foodBonus = 100;
+    private Timer wordGeneratorTimer;
+    private Timer resourceConsumptionTimer;
 
     public GamePanel(TextStore textStore, GameFrame gameFrame)      //생성자
     {
@@ -42,7 +43,7 @@ public class GamePanel extends JPanel
 
     public void start()
     {
-        Timer wordGeneratorTimer = new Timer(1000, new ActionListener()     //1초마다 새 단어 생성
+        this.wordGeneratorTimer = new Timer(1000, new ActionListener()     //1초마다 새 단어 생성
         {
             @Override
             public void actionPerformed(ActionEvent e)
@@ -51,7 +52,7 @@ public class GamePanel extends JPanel
             }
         });
         wordGeneratorTimer.start();
-        Timer resourceConsumptionTimer = new Timer(2000, new ActionListener()
+        this.resourceConsumptionTimer = new Timer(2000, new ActionListener()
         {
             @Override
             public void actionPerformed(ActionEvent e)
@@ -101,6 +102,22 @@ public class GamePanel extends JPanel
             groundPanel.repaint();
             GenerateNewWord();      //단어가 사라지면 새 단어 생성
         });
+    }
+
+    public void StopAllWords()
+    {
+        if(wordGeneratorTimer != null)
+        {
+            wordGeneratorTimer.stop();
+        }
+        if(resourceConsumptionTimer != null)
+        {
+            resourceConsumptionTimer.stop();
+        }
+        for(FallingWord word : activeWords.values())
+        {
+            word.StopFalling();
+        }
     }
 
     //개별 단어의 움직임을 처리하는 멀티스레드 클래스
@@ -183,6 +200,13 @@ public class GamePanel extends JPanel
                 {
                     JTextField textField = (JTextField) (e.getSource());
                     String inputText = textField.getText();
+                    if(inputText.equals("결과보기"))
+                    {
+                        gameFrame.IncreaseScore(1000);
+                        gameFrame.EndGame();
+                        textField.setText("");
+                        return;
+                    }
                     FallingWord matchedWord = activeWords.get(inputText);
                     if(matchedWord != null)
                     {
@@ -195,6 +219,7 @@ public class GamePanel extends JPanel
                         {
                             gameFrame.AddFood(foodBonus);
                         }
+                        gameFrame.IncreaseScore(10);
                         RemoveWord(matchedWord);
                         textField.setText("");
                     }

@@ -8,8 +8,8 @@ import java.awt.GraphicsDevice;
 public class MainWindow extends JFrame{
     private JButton exitButton;
     private JButton productionListButton;
-    private JButton steamPageButton;
-    private JButton studioNewsButton;
+    private JButton rankingButton;
+    private JButton AddWordPageButton;
     private JButton settingButton;
     private JButton loadGameButton;
     private JButton infinityModeButton;
@@ -24,8 +24,8 @@ public class MainWindow extends JFrame{
     ImageIcon infinityModeDefaultIcon = new ImageIcon("images/infinity_default.png");
     ImageIcon loadGameDefaultIcon = new ImageIcon("images/load_default.png");
     ImageIcon settingDefaultIcon = new ImageIcon("images/setting_default.png");
-    ImageIcon studioNewsDefaultIcon = new ImageIcon("images/studio_default.png");
-    ImageIcon steamPageDefaultIcon = new ImageIcon("images/steam_default.png");
+    ImageIcon AddWordPageDefaultIcon = new ImageIcon("images/word_default.png");
+    ImageIcon rankingDefaultIcon = new ImageIcon("images/rank_default.png");
     ImageIcon productionListDefaultIcon = new ImageIcon("images/production_default.png");
     ImageIcon exitDefaultIcon = new ImageIcon("images/exit_default.png");
 
@@ -35,8 +35,8 @@ public class MainWindow extends JFrame{
     ImageIcon infinityModeRollOverIcon = new ImageIcon("images/infinity_hover.png");
     ImageIcon loadGameRollOverIcon = new ImageIcon("images/load_hover.png");
     ImageIcon settingRollOverIcon = new ImageIcon("images/setting_hover.png");
-    ImageIcon studioNewsRollOverIcon = new ImageIcon("images/studio_hover.png");
-    ImageIcon steamPageRollOverIcon = new ImageIcon("images/steam_hover.png");
+    ImageIcon AddWordPageRollOverIcon = new ImageIcon("images/word_hover.png");
+    ImageIcon rankingRollOverIcon = new ImageIcon("images/rank_hover.png");
     ImageIcon productionListRollOverIcon = new ImageIcon("images/production_hover.png");
     ImageIcon exitRollOverIcon = new ImageIcon("images/exit_hover.png");
 
@@ -46,8 +46,8 @@ public class MainWindow extends JFrame{
     ImageIcon infinityModePressedIcon = new ImageIcon("images/infinity_hover.png");
     ImageIcon loadGamePressedIcon = new ImageIcon("images/load_hover.png");
     ImageIcon settingPressedIcon = new ImageIcon("images/setting_hover.png");
-    ImageIcon studioNewsPressedIcon = new ImageIcon("images/studio_hover.png");
-    ImageIcon steamPagePressedIcon = new ImageIcon("images/steam_hover.png");
+    ImageIcon AddWordPagePressedIcon = new ImageIcon("images/word_hover.png");
+    ImageIcon rankingPressedIcon = new ImageIcon("images/rank_hover.png");
     ImageIcon productionListPressedIcon = new ImageIcon("images/production_hover.png");
     ImageIcon exitPressedIcon = new ImageIcon("images/exit_hover.png");
 
@@ -188,8 +188,8 @@ public class MainWindow extends JFrame{
         //버튼 생성
         this.exitButton = CreateRelativeButton(exitDefaultIcon, exitRollOverIcon, exitPressedIcon, deviceWidth, deviceHeight, 15, 88, 16, 4);
         this.productionListButton = CreateRelativeButton(productionListDefaultIcon, productionListRollOverIcon, productionListPressedIcon, deviceWidth, deviceHeight, 15, 82, 16, 4);
-        this.steamPageButton = CreateRelativeButton(steamPageDefaultIcon, steamPageRollOverIcon, steamPagePressedIcon, deviceWidth, deviceHeight, 15, 76, 16, 4);
-        this.studioNewsButton = CreateRelativeButton(studioNewsDefaultIcon, studioNewsRollOverIcon, studioNewsPressedIcon, deviceWidth, deviceHeight, 15, 70, 16, 4);
+        this.rankingButton = CreateRelativeButton(rankingDefaultIcon, rankingRollOverIcon, rankingPressedIcon, deviceWidth, deviceHeight, 15, 76, 16, 4);
+        this.AddWordPageButton = CreateRelativeButton(AddWordPageDefaultIcon, AddWordPageRollOverIcon, AddWordPagePressedIcon, deviceWidth, deviceHeight, 15, 70, 16, 4);
         this.settingButton = CreateRelativeButton(settingDefaultIcon, settingRollOverIcon, settingPressedIcon, deviceWidth, deviceHeight, 15, 54, 16, 4);
         this.loadGameButton = CreateRelativeButton(loadGameDefaultIcon, loadGameRollOverIcon, loadGamePressedIcon, deviceWidth, deviceHeight, 15, 48, 16, 4);
         this.infinityModeButton = CreateRelativeButton(infinityModeDefaultIcon, infinityModeRollOverIcon, infinityModePressedIcon, deviceWidth, deviceHeight, 15, 41, 16, 5);
@@ -204,8 +204,8 @@ public class MainWindow extends JFrame{
                         infinityModeButton,
                         loadGameButton,
                         settingButton,
-                        studioNewsButton,
-                        steamPageButton,
+                        AddWordPageButton,
+                        rankingButton,
                         productionListButton,
                         exitButton,
                 };
@@ -227,20 +227,20 @@ public class MainWindow extends JFrame{
                 ShowCrewList();  // 게임 제작진 목록 표시창으로 이동
             }
         });
-        this.steamPageButton.addActionListener(new ActionListener()      // 해당 버튼을 누를 시 발생할 이벤트 설정
+        this.rankingButton.addActionListener(new ActionListener()      // 해당 버튼을 누를 시 발생할 이벤트 설정
         {
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                OpenSteamPage();  // 스팀 페이지 열기
+                OpenRankingPage();  // 스팀 페이지 열기
             }
         });
-        this.studioNewsButton.addActionListener(new ActionListener()      // 해당 버튼을 누를 시 발생할 이벤트 설정
+        this.AddWordPageButton.addActionListener(new ActionListener()      // 해당 버튼을 누를 시 발생할 이벤트 설정
         {
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                ShowStudioNewsPage();  // 게임사 소식 보러가기
+                AddNewWordPage();  // 게임사 소식 보러가기
             }
         });
         this.settingButton.addActionListener(new ActionListener()      // 해당 버튼을 누를 시 발생할 이벤트 설정
@@ -287,8 +287,8 @@ public class MainWindow extends JFrame{
         //버튼 추가
         this.add(exitButton);
         this.add(productionListButton);
-        this.add(steamPageButton);
-        this.add(studioNewsButton);
+        this.add(rankingButton);
+        this.add(AddWordPageButton);
         this.add(settingButton);
         this.add(loadGameButton);
         this.add(infinityModeButton);
@@ -332,20 +332,19 @@ public class MainWindow extends JFrame{
         this.dispose();
     }
 
-    private void ShowStudioNewsPage()
+    private void AddNewWordPage()
     {
-        //추후 추가예정
+        new AddNewWordWindow();
     }
 
-    private void OpenSteamPage()
+    private void OpenRankingPage()
     {
-        //추후 추가예정
+        new RankingWindow(deviceWidth, deviceHeight);
     }
 
     private void ShowCrewList()
     {
         new ProductionListWindow();
-        this.dispose();
     }
 
     private void Exit()

@@ -9,6 +9,7 @@ import java.util.concurrent.atomic.AtomicInteger;       //멀티쓰레드 환경
 public class GameFrame extends JFrame{
     private int deviceWidth;
     private int deviceHeight;
+    private int campaignLevel;
     private AtomicInteger coalAmount;       //쓰레드에서 바뀌는 변수
     private AtomicInteger foodAmount;       //쓰레드에서 바뀌는 변수
     private int population;
@@ -24,11 +25,15 @@ public class GameFrame extends JFrame{
     private JLabel houseTemperatureLabel;
     private JLabel currentTemperatureStringLabel;
     private JLabel currentTemperatureLabel;
+    private Timer gameTimer;        //전체 게임의 제한 시간 카운트용 타이머
+    private int gameDuration = 120 * 1000;      // 2분
+    private boolean isGameRunning = true;       //게임 실행 상태 플래그
+    private int score = 0;      //플레이어 점수
 
     //인게임 UI 이미지 로딩
     ImageIcon topUI = new ImageIcon("images/InGameUI.png");
 
-    public GameFrame(int coalAmount, int foodAmount, int population, int houseTemperature, int currentTemperature)
+    public GameFrame(int coalAmount, int foodAmount, int population, int houseTemperature, int currentTemperature, int campaignLevel)
     {
         super("게임화면");
 
@@ -91,6 +96,7 @@ public class GameFrame extends JFrame{
         this.population = population;       //인구수
         this.houseTemperature = houseTemperature;       //거주지 온도
         this.currentTemperature = currentTemperature;       //현재 온도
+        this.campaignLevel = campaignLevel;
 
         this.gamePanel = new GamePanel(textStore, this);
 
@@ -99,8 +105,38 @@ public class GameFrame extends JFrame{
 
         //가시성 설정
         this.setVisible(true);      // 프레임이 보이도록 설정
+        StartGameTimer();       //게임 시작과 동시에 타이머 시작
+        this.gamePanel.start();  //게임이 시작하자마자 실행(단어 생성 메소드)
+    }
 
-        this.gamePanel.start();  //게임이 시작하자마자 실행
+    private void StartGameTimer()
+    {
+        gameTimer = new Timer(gameDuration, new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                EndGame();
+                gameTimer.stop();
+            }
+        });
+        gameTimer.setRepeats(false);
+        gameTimer.start();
+    }
+
+    public void EndGame()
+    {
+        if(isGameRunning)
+        {
+            isGameRunning = false;
+            gamePanel.StopAllWords();
+            ShowResultDialogue();
+        }
+    }
+
+    public void IncreaseScore(int amount)
+    {
+        this.score += amount;
     }
 
     //GamePanel이 자원 상태를 업데이트 하도록 공개시킨 메소드--------------------------
@@ -357,5 +393,78 @@ public class GameFrame extends JFrame{
             this.add(newLabel);
         }
         UpdateStatsUI();
+    }
+
+    private void ShowResultDialogue()
+    {
+        JDialog resultDialog = new JDialog(this, "게임 종료", true);
+        resultDialog.setLayout(new BorderLayout(15, 15));
+        resultDialog.setSize(1000, 300);
+        resultDialog.setResizable(false);
+        resultDialog.setLocationRelativeTo(this);
+        //상단 점수 표시
+        JPanel scorePanel = new JPanel();
+        scorePanel.setBackground(new Color(0x16191B));
+        JLabel resultLabel = new JLabel("게임 종료", SwingConstants.CENTER);
+        resultLabel.setForeground(Color.WHITE);
+        resultLabel.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 30));
+        scorePanel.add(resultLabel);
+        JLabel finalScoreLabel = new JLabel("최종 점수 : " + this.score + "점", SwingConstants.CENTER);
+        finalScoreLabel.setForeground(Color.YELLOW);
+        finalScoreLabel.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 40));
+        //점수와 플레이어 이름 입력창 중앙정렬
+        JPanel contentPanel = new JPanel(new GridLayout());
+        contentPanel.setBackground(new Color(0x16191B));
+        GridBagConstraints gridBagConstraints = new GridBagConstraints();
+        gridBagConstraints.insets = new Insets(10,10,10,10);
+        gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
+        //플레이어 이름 입력
+        JLabel namePrompt = new JLabel("이름을 입력하세요 : ", SwingConstants.CENTER);
+        namePrompt.setForeground(Color.WHITE);
+        JTextField nameTextField = new JTextField(15);
+        nameTextField.setPreferredSize(new Dimension(200, 35));
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridwidth = 2;
+        contentPanel.add(finalScoreLabel, gridBagConstraints);
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridwidth = 1;
+        contentPanel.add(namePrompt, gridBagConstraints);
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridwidth = 1;
+        contentPanel.add(nameTextField, gridBagConstraints);
+        //하단 저장 및 종료 버튼 추가
+        JButton saveAndExitButton = new JButton("저장 및 종료");
+        saveAndExitButton.setBackground(new Color(0x4CAF50));
+        saveAndExitButton.setForeground(Color.WHITE);
+        saveAndExitButton.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 18));
+        saveAndExitButton.setFocusPainted(false);
+        saveAndExitButton.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                String userName = nameTextField.getText().trim();
+                if(userName.isEmpty())
+                {
+                    JOptionPane.showMessageDialog(resultDialog, "플레이어 이름을 입력해야 저장됩니다.", "경고", JOptionPane.WARNING_MESSAGE);
+                    return;
+                }
+                String difficulty = "LV_" + campaignLevel;   //난이도 결정
+                ScoreManager.saveScore(userName, difficulty, score);
+                resultDialog.dispose();
+                dispose();
+                new MainWindow();
+            }
+        });
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.setBackground(new Color(0x16191B));
+        buttonPanel.add(saveAndExitButton);
+        resultDialog.add(scorePanel, BorderLayout.NORTH);
+        resultDialog.add(contentPanel, BorderLayout.CENTER);
+        resultDialog.add(buttonPanel, BorderLayout.SOUTH);
+        resultDialog.setVisible(true);
     }
 }

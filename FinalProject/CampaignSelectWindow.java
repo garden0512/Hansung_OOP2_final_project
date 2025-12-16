@@ -403,7 +403,7 @@ public class CampaignSelectWindow extends JFrame {
             selectedLevel = 4;
         }
         int[] stats = levelStats[selectedLevel];    //선택한 레벨의 기본 자원 수치 가져오기
-        new GameFrame(stats[0], stats[1], stats[2], stats[3], stats[4]);        //자원량 전달하는 생성자
+        new GameFrame(stats[0], stats[1], stats[2], stats[3], stats[4], selectedLevel);        //자원량 전달하는 생성자
         this.dispose();
     }
 }
