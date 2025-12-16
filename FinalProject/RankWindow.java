@@ -74,8 +74,8 @@ public class RankWindow extends JFrame
     {
         super("순위창");
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);     //전체 프로그램 종료 방지
-        double screenWidthFactor = (double) (mainWindowWidth / baseWidth);      //현재 열린 창의 가로비율
-        double screenHeightFactor = (double)(mainWindowHeight / baseHeight);    //현재 열린 창의 세로비율
+        double screenWidthFactor = (double) mainWindowWidth / baseWidth;      //현재 열린 창의 가로비율
+        double screenHeightFactor = (double)mainWindowHeight / baseHeight;    //현재 열린 창의 세로비율
         double scaleFactor = Math.min(screenWidthFactor, screenHeightFactor);   //비율 유지를 위한 최소 팩터 사용
         //스케일링
         int frameWidth = scale(windowWidth, scaleFactor);
