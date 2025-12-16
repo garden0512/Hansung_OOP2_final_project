@@ -5,7 +5,29 @@ import java.awt.event.ActionListener;
 import java.awt.GraphicsEnvironment;
 import java.awt.GraphicsDevice;
 
-public class MainWindow extends JFrame{
+class MainBackgroundPanel extends JPanel
+{
+    private Image originalImage;
+
+    public MainBackgroundPanel(ImageIcon icon, int width, int height)
+    {
+        this.originalImage = icon.getImage();
+        this.setLayout(null);       //내부 JLabel을 절대 좌표로 배치
+        this.setPreferredSize(new Dimension(width, height));
+    }
+    @Override
+    protected void paintComponent(Graphics graphics)
+    {
+        super.paintComponent(graphics);
+        if(originalImage != null)
+        {
+            graphics.drawImage(originalImage, 0, 0, getWidth(), getHeight(), this);
+        }
+    }
+}
+
+public class MainWindow extends JFrame
+{
     private JButton exitButton;
     private JButton productionListButton;
     private JButton rankingButton;
@@ -17,6 +39,7 @@ public class MainWindow extends JFrame{
     private JButton continueGameButton;
     private int deviceWidth;
     private int deviceHeight;
+    private MainBackgroundPanel mainBackgroundPanel;
 
     //기본 이미지 로딩
     ImageIcon continueDefaultIcon = new ImageIcon("images/continue_default.png");
@@ -28,6 +51,7 @@ public class MainWindow extends JFrame{
     ImageIcon rankingDefaultIcon = new ImageIcon("images/rank_default.png");
     ImageIcon productionListDefaultIcon = new ImageIcon("images/production_default.png");
     ImageIcon exitDefaultIcon = new ImageIcon("images/exit_default.png");
+    ImageIcon backgroundImage = new ImageIcon("images/background.jpg");
 
     //커서 호버링 이미지 로딩
     ImageIcon continueRollOverIcon = new ImageIcon("images/continue_hover.png");
@@ -108,6 +132,11 @@ public class MainWindow extends JFrame{
             System.err.println("유효하지 않은 색상코드입니다.");
             this.getContentPane().setBackground(Color.BLACK);
         }
+
+        //배경 이미지 설정
+        ImageIcon resizedBackgroundImage = ResizeIcon(backgroundImage, this.getWidth(), this.getHeight());
+        this.mainBackgroundPanel = new MainBackgroundPanel(backgroundImage, this.deviceWidth, this.deviceHeight);
+        this.setContentPane(this.mainBackgroundPanel);
 
         //기본 UI 생성
         CreateButtons();    // 버튼들 만드는 메소드

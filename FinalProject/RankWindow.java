@@ -141,7 +141,7 @@ public class RankWindow extends JFrame
 
     private void displayScores(JPanel panel, Map<String, List<ScoreEntry>> groupedScores, List<String> sortedDifficulties, double scaleFactor)
     {
-        String[] fixedDifficulties = {"LV_0", "LV_1", "LV_2", "LV_3", "LV_4"};
+        String[] fixedDifficulties = {"LV_1", "LV_2", "LV_3", "LV_4", "LV_5"};
 //        List<String> displayDifficulties = sortedDifficulties.stream()
 //                .limit(maxDifficulties)
 //                .collect(Collectors.toList());

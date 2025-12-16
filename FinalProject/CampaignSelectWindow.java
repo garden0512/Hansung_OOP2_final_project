@@ -178,6 +178,7 @@ public class CampaignSelectWindow extends JFrame {
 
         //조정된 아이콘들을 버튼에 적용
         newButton.setIcon(resizedDefaultIcon);
+        newButton.setRolloverIcon(resizedSelectedIcon);
         newButton.setSelectedIcon(resizedSelectedIcon);
 
         newButton.setContentAreaFilled(false);     //버튼 내부 채우지 않도록 하는 메소드
@@ -384,23 +385,23 @@ public class CampaignSelectWindow extends JFrame {
         int selectedLevel = 0;
         if(this.lv1Button.isSelected())
         {
-            selectedLevel = 0;
+            selectedLevel = 1;
         }
         else if(this.lv2Button.isSelected())
         {
-            selectedLevel = 1;
+            selectedLevel = 2;
         }
         else if(this.lv3Button.isSelected())
         {
-            selectedLevel = 2;
+            selectedLevel = 3;
         }
         else if(this.lv4Button.isSelected())
         {
-            selectedLevel = 3;
+            selectedLevel = 4;
         }
         else if(this.lv5Button.isSelected())
         {
-            selectedLevel = 4;
+            selectedLevel = 5;
         }
         int[] stats = levelStats[selectedLevel];    //선택한 레벨의 기본 자원 수치 가져오기
         new GameFrame(stats[0], stats[1], stats[2], stats[3], stats[4], selectedLevel);        //자원량 전달하는 생성자
