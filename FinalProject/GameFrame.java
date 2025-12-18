@@ -26,9 +26,18 @@ public class GameFrame extends JFrame{
     private JLabel currentTemperatureStringLabel;
     private JLabel currentTemperatureLabel;
     private Timer gameTimer;        //전체 게임의 제한 시간 카운트용 타이머
+    private Timer temperatureTimer;     //온도 하락을 위한 타이머
+    private Timer scoreTimer;       //점수 계산을 위한 타이머
+    private long startTime;
     private int gameDuration = 120 * 1000;      // 2분
+    private int temperatureDropInternal = 30 * 1000;
+    private int finalDropTime = 10 * 1000;
     private boolean isGameRunning = true;       //게임 실행 상태 플래그
-    private int score = 0;      //플레이어 점수
+    private double score = 0.0;      //플레이어 점수
+    private AudioPlayer gameAudio;
+    private String gameMusicPath = "sounds/game.wav";
+    private int[] scoreRates = {1, 2, 3, 4, 6};      //초당 점수
+    private int[] timeIntervals = {30000, 60000, 90000, 110000, 120000};
 
     //인게임 UI 이미지 로딩
     ImageIcon topUI = new ImageIcon("images/InGameUI.png");
@@ -102,15 +111,19 @@ public class GameFrame extends JFrame{
 
         DisplayTopUIPanel();        //상단 UI 그리기
         addGamePanel();     //게임 화면 그리기
+        InitializeGameAudio();
 
         //가시성 설정
         this.setVisible(true);      // 프레임이 보이도록 설정
         StartGameTimer();       //게임 시작과 동시에 타이머 시작
+        StartTemperatureTimer();
+        StartScoreTimer();
         this.gamePanel.start();  //게임이 시작하자마자 실행(단어 생성 메소드)
     }
 
     private void StartGameTimer()
     {
+        this.startTime = System.currentTimeMillis();
         gameTimer = new Timer(gameDuration, new ActionListener()
         {
             @Override
@@ -124,19 +137,111 @@ public class GameFrame extends JFrame{
         gameTimer.start();
     }
 
+    private void StartScoreTimer()
+    {
+        // 100ms마다 실행하여 점수 누적
+        scoreTimer = new Timer(100, new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                if (!isGameRunning) {
+                    scoreTimer.stop();
+                    return;
+                }
+
+                // 1. 현재 플레이 시간 계산
+                long elapsedTime = System.currentTimeMillis() - startTime;
+
+                if (elapsedTime > gameDuration) {
+                    elapsedTime = gameDuration; // 2분을 초과하지 않도록 제한
+                }
+
+                // 2. 현재 시간 구간에 해당하는 초당 점수율을 찾습니다.
+                int currentRate = 0;
+                for (int i = 0; i < timeIntervals.length; i++)
+                {
+                    if (elapsedTime <= timeIntervals[i])
+                    {
+                        currentRate = scoreRates[i];
+                        break;
+                    }
+                }
+                double scoreToAdd = currentRate * 0.2;
+                score += scoreToAdd;
+            }
+        });
+        scoreTimer.start();
+    }
+
+    private void InitializeGameAudio()
+    {
+        this.gameAudio = new AudioPlayer(gameMusicPath);
+        this.gameAudio.setVolume(0.5);
+        this.gameAudio.play(true); // 게임 BGM 무한 반복 재생 시작
+    }
+
+    private void StartTemperatureTimer()
+    {
+        temperatureTimer = new Timer(temperatureDropInternal, new ActionListener()
+        {
+            private long startTime = System.currentTimeMillis();
+            private long endTime = startTime + gameDuration;
+            @Override
+            public void actionPerformed(ActionEvent r)
+            {
+                long currentTime = System.currentTimeMillis();
+                long remainingTime = endTime - currentTime;
+                int dropAmount = 10;
+                DropTemperature(dropAmount);
+            }
+        });
+        temperatureTimer.start();
+        int finalDropDelay = gameDuration - finalDropTime;
+        if(finalDropDelay > 0)
+        {
+            Timer finalDropTimer = new Timer(finalDropDelay, new ActionListener()
+            {
+                @Override
+                public void actionPerformed(ActionEvent e)
+                {
+                    if(isGameRunning)
+                    {
+                        DropTemperature(20);
+                    }
+                }
+            });
+            finalDropTimer.setRepeats(false);
+            finalDropTimer.start();
+        }
+    }
+
+    private void DropTemperature(int amount)
+    {
+        this.currentTemperature -= amount;
+        UpdateStatsUI();
+    }
+
     public void EndGame()
     {
         if(isGameRunning)
         {
             isGameRunning = false;
+            if (temperatureTimer != null)
+            {
+                temperatureTimer.stop();
+            }
+            if (gameAudio != null)
+            {
+                gameAudio.stop();
+            }
+            if (scoreTimer != null)
+            {
+                scoreTimer.stop();
+            }
             gamePanel.StopAllWords();
             ShowResultDialogue();
         }
-    }
-
-    public void IncreaseScore(int amount)
-    {
-        this.score += amount;
     }
 
     //GamePanel이 자원 상태를 업데이트 하도록 공개시킨 메소드--------------------------
@@ -169,14 +274,21 @@ public class GameFrame extends JFrame{
 
     public void ConsumeResources()      //현실시간으로 2초동안 소비되는 자원의 양을 결정하고 호출
     {
-        double coalConsumptionRate = ((double)population / 100.0) * ((double)currentTemperature / -10.0);       //석탄 소비량
+        double coalConsumptionRate = ((double)population / 100.0) * ((double)currentTemperature / -10.0) * (double)campaignLevel;       //석탄 소비량
         int coalConsumed = (int) Math.max(1, Math.round(coalConsumptionRate));      //최소 소비량을 1로 보장
         int foodConsumed = Math.max(1, population / 10);    //식량 소비량
         //자원 소비
         this.coalAmount.updateAndGet(current -> Math.max(0, current - coalConsumed));
         this.foodAmount.updateAndGet(current -> Math.max(0, current - foodConsumed));
         UpdateStatsUI();
-        //자원 부족 시 게임오버 처리 로직 추가 예정
+        if (this.coalAmount.get() <= 0)
+        {
+            EndGame();
+        }
+        else if (this.foodAmount.get() <= 0)
+        {
+            EndGame();
+        }
     }
 
     public void UpdateStatsUI()     //UI 업데이트 전용 메소드
@@ -227,7 +339,7 @@ public class GameFrame extends JFrame{
         gamePanel.setBounds(0, panelY, panelWidth, panelHeight);
 
         // 폰트 크기 계산 및 GamePanel 초기화
-        int preferredFontSize = CalculateFontSize(1);
+        int preferredFontSize = CalculateFontSize(2);
         gamePanel.initializeUI(preferredFontSize);
 
         // GamePanel 내의 컴포넌트들이 크기가 변경된 GamePanel에 맞춰 재배치되도록 요청 (선택적)
@@ -315,17 +427,6 @@ public class GameFrame extends JFrame{
         Font mainStatFont = new Font(Font.SANS_SERIF, Font.BOLD, mainFontSize);
 
         Color textColor = Color.WHITE;
-
-//        String[] statTexts =
-//                {
-//                        "석탄 : " + String.format("%04d", this.coalAmount),
-//                        "식량 :  " + String.format("%04d", this.foodAmount),
-//                        "인구 : " + String.format("%04d", this.population),
-//                        "집 온도 :  " + String.format("%04d", this.houseTemperature),
-//                        "현재 온도",
-//                        this.currentTemperature + "℃"
-//                };
-
         double[][] relativePositions =
                 {
                         {6.5, 4.0, 15.0, 0.0, 0.0},     //석탄
@@ -409,7 +510,7 @@ public class GameFrame extends JFrame{
         resultLabel.setForeground(Color.WHITE);
         resultLabel.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 30));
         scorePanel.add(resultLabel);
-        JLabel finalScoreLabel = new JLabel("최종 점수 : " + this.score + "점", SwingConstants.CENTER);
+        JLabel finalScoreLabel = new JLabel("최종 점수 : " + (int)Math.ceil(this.score) + "점", SwingConstants.CENTER);
         finalScoreLabel.setForeground(Color.YELLOW);
         finalScoreLabel.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 40));
         //점수와 플레이어 이름 입력창 중앙정렬
@@ -453,7 +554,7 @@ public class GameFrame extends JFrame{
                     return;
                 }
                 String difficulty = "LV_" + campaignLevel;   //난이도 결정
-                ScoreManager.saveScore(userName, difficulty, score);
+                ScoreManager.saveScore(userName, difficulty, (int)Math.ceil(score));
                 resultDialog.dispose();
                 dispose();
                 new MainWindow();

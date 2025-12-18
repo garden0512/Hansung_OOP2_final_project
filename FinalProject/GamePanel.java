@@ -1,4 +1,4 @@
-import javax.swing.JPanel;
+import javax.swing.*;
 import javax.swing.JTextField;
 import javax.swing.JLabel;
 import javax.swing.Timer;
@@ -22,12 +22,17 @@ public class GamePanel extends JPanel
     private int foodBonus = 100;
     private Timer wordGeneratorTimer;
     private Timer resourceConsumptionTimer;
+    private ImageIcon backgroundImageIcon = new ImageIcon("images/background.jpg");
+    private Image backgroundImage;
 
     public GamePanel(TextStore textStore, GameFrame gameFrame)      //생성자
     {
         this.textStore = textStore;
         this.gameFrame = gameFrame;
         this.setBackground(Color.BLACK);
+        if (backgroundImageIcon != null) {
+            this.backgroundImage = backgroundImageIcon.getImage();
+        }
         setLayout(new BorderLayout());
         add(new InputPanel(), BorderLayout.SOUTH);
         add(groundPanel, BorderLayout.CENTER);
@@ -73,8 +78,11 @@ public class GamePanel extends JPanel
                 boolean isCoalWord = new Random().nextBoolean();    //단어의 종류를 랜덤하게 정함.
                 //GroundPanel의 크기를 기준으로 랜덤한 위치 계산
                 int panelWidth = groundPanel.getWidth();
-                int x = (int)(Math.random() * (panelWidth * 0.8));
-                int y = 50;
+                int panelHeight = groundPanel.getHeight();
+                double relativeX = 0.05 + Math.random() * 0.85;
+                int x = (int)(relativeX * panelWidth);
+                double relativeY = 0.05;
+                int y = (int)(relativeY * panelHeight);
 
                 Font wordFont = new Font(Font.SANS_SERIF, Font.BOLD, preferredFontSize);
                 FallingWord word = new FallingWord(text, x, y, wordFont, isCoalWord);
@@ -132,7 +140,7 @@ public class GamePanel extends JPanel
             this.isCoalWord = isCoalWord;
             this.setFont(wordFont);
             this.setForeground(isCoalWord ? Color.BLACK : new Color(0x966147));
-            this.setSize(200, 50);
+            this.setSize(500, 50);
             this.setLocation(x, y);
             this.setVisible(true);
         }
@@ -181,8 +189,24 @@ public class GamePanel extends JPanel
     {
         public GroundPanel()
         {
-            this.setBackground(Color.DARK_GRAY);
+//            this.setBackground(Color.DARK_GRAY);
+            this.setOpaque(true);
             this.setLayout(null);
+        }
+        @Override
+        protected void paintComponent(Graphics g)
+        {
+            super.paintComponent(g);
+
+            // 배경 이미지가 로드된 경우
+            if (backgroundImage != null) {
+                // 패널 크기(getWidth(), getHeight())에 맞춰 이미지를 늘려 그립니다.
+                g.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), this);
+            } else {
+                // 이미지가 없을 경우, 기존의 배경색을 유지합니다.
+                g.setColor(Color.DARK_GRAY);
+                g.fillRect(0, 0, getWidth(), getHeight());
+            }
         }
     }
 
@@ -191,7 +215,7 @@ public class GamePanel extends JPanel
         private JTextField inputText = new JTextField(20);
         public InputPanel()
         {
-            this.setBackground(Color.GRAY);
+            this.setBackground(Color.decode("#16191B"));
             add(inputText);
             inputText.addActionListener(new ActionListener()
             {
@@ -202,7 +226,6 @@ public class GamePanel extends JPanel
                     String inputText = textField.getText();
                     if(inputText.equals("결과보기"))
                     {
-                        gameFrame.IncreaseScore(1000);
                         gameFrame.EndGame();
                         textField.setText("");
                         return;
@@ -219,8 +242,11 @@ public class GamePanel extends JPanel
                         {
                             gameFrame.AddFood(foodBonus);
                         }
-                        gameFrame.IncreaseScore(10);
                         RemoveWord(matchedWord);
+                        textField.setText("");
+                    }
+                    else
+                    {
                         textField.setText("");
                     }
                 }

@@ -16,33 +16,35 @@ public class CampaignSelectWindow extends JFrame {
     private JButton backButton;
     private JButton campaignLoadButton;
     private JButton newCampaignButton;
+    private AudioPlayer audioPlayer;
+    private MainWindow mainWindow;
 
     //기본 이미지 로딩
-    ImageIcon lv1DefaultIcon = new ImageIcon("images/lv1_default.png");
-    ImageIcon lv2DefaultIcon = new ImageIcon("images/lv2_default.png");
-    ImageIcon lv3DefaultIcon = new ImageIcon("images/lv3_default.png");
-    ImageIcon lv4DefaultIcon = new ImageIcon("images/lv4_default.png");
-    ImageIcon lv5DefaultIcon = new ImageIcon("images/lv5_default.png");
-    ImageIcon backDefaultIcon = new ImageIcon("images/back_default.png");
-    ImageIcon campaignLoadDefaultIcon = new ImageIcon("images/campaign_load_default.png");
-    ImageIcon newCampaignDefaultIcon = new ImageIcon("images/new_default.png");
+    private ImageIcon lv1DefaultIcon = new ImageIcon("images/lv1_default.png");
+    private ImageIcon lv2DefaultIcon = new ImageIcon("images/lv2_default.png");
+    private ImageIcon lv3DefaultIcon = new ImageIcon("images/lv3_default.png");
+    private ImageIcon lv4DefaultIcon = new ImageIcon("images/lv4_default.png");
+    private ImageIcon lv5DefaultIcon = new ImageIcon("images/lv5_default.png");
+    private ImageIcon backDefaultIcon = new ImageIcon("images/back_default.png");
+    private ImageIcon campaignLoadDefaultIcon = new ImageIcon("images/campaign_load_default.png");
+    private ImageIcon newCampaignDefaultIcon = new ImageIcon("images/new_default.png");
 
     //선택된 이미지 로딩
-    ImageIcon lv1SelectedIcon = new ImageIcon("images/lv1_selected.png");
-    ImageIcon lv2SelectedIcon = new ImageIcon("images/lv2_selected.png");
-    ImageIcon lv3SelectedIcon = new ImageIcon("images/lv3_selected.png");
-    ImageIcon lv4SelectedIcon = new ImageIcon("images/lv4_selected.png");
-    ImageIcon lv5SelectedIcon = new ImageIcon("images/lv5_selected.png");
+    private ImageIcon lv1SelectedIcon = new ImageIcon("images/lv1_selected.png");
+    private ImageIcon lv2SelectedIcon = new ImageIcon("images/lv2_selected.png");
+    private ImageIcon lv3SelectedIcon = new ImageIcon("images/lv3_selected.png");
+    private ImageIcon lv4SelectedIcon = new ImageIcon("images/lv4_selected.png");
+    private ImageIcon lv5SelectedIcon = new ImageIcon("images/lv5_selected.png");
 
     //호버링 이미지 로딩
-    ImageIcon backRollOverIcon = new ImageIcon("images/back_hover.png");
-    ImageIcon campaignLoadRollOverIcon = new ImageIcon("images/campaign_load_hover.png");
-    ImageIcon newCampaignRollOverIcon = new ImageIcon("images/new_hover.png");
+    private ImageIcon backRollOverIcon = new ImageIcon("images/back_hover.png");
+    private  ImageIcon campaignLoadRollOverIcon = new ImageIcon("images/campaign_load_hover.png");
+    private ImageIcon newCampaignRollOverIcon = new ImageIcon("images/new_hover.png");
 
     //클릭 이미지 로딩
-    ImageIcon backPressedIcon = new ImageIcon("images/back_hover.png");
-    ImageIcon campaignLoadPressedIcon = new ImageIcon("images/campaign_load_hover.png");
-    ImageIcon newCampaignPressedIcon = new ImageIcon("images/new_hover.png");
+    private  ImageIcon backPressedIcon = new ImageIcon("images/back_hover.png");
+    private ImageIcon campaignLoadPressedIcon = new ImageIcon("images/campaign_load_hover.png");
+    private ImageIcon newCampaignPressedIcon = new ImageIcon("images/new_hover.png");
 
     //레벨별 수치 배열
     private int[][] levelStats =
@@ -55,14 +57,16 @@ public class CampaignSelectWindow extends JFrame {
                     {100, 50, 250, 4, -40}
             };
 
-    public CampaignSelectWindow()
+    public CampaignSelectWindow(AudioPlayer audioPlayer, MainWindow mainWindow)
     {
         super("캠페인 모드 선택 창");
 
         //기본 프레임
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);    //프레임을 닫으면 메모리에서 제거되도록 설정하는 기능
+        this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);    //프레임을 닫으면 메모리에서 제거되도록 설정하는 기능
         this.setUndecorated(true);      // 작업줄 또는 창 테두리 등이 안보이도록 하는 기능
         this.setLayout(null);       // 비율 기반 배치를 위한 null 레이아웃 설정
+        this.audioPlayer = audioPlayer;
+        this.mainWindow = mainWindow;
 
         //풀스크린으로 프레임이 열리도록 설정
         GraphicsDevice graphicsDevice = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
@@ -370,6 +374,16 @@ public class CampaignSelectWindow extends JFrame {
 
     private void PressedBackButton()
     {
+//        if(mainWindow != null)
+//        {
+//            mainWindow.setVisible(true);
+//            mainWindow.toFront();
+//            mainWindow.requestFocus();
+//        }
+        if(audioPlayer != null)
+        {
+            audioPlayer.stop();
+        }
         new MainWindow();
         this.dispose();
     }
@@ -381,6 +395,10 @@ public class CampaignSelectWindow extends JFrame {
 
     private void PressedNewCampaignButton()
     {
+        if(audioPlayer != null)
+        {
+            audioPlayer.stop();
+        }
         //선택한 버튼에 따른 레벨
         int selectedLevel = 0;
         if(this.lv1Button.isSelected())

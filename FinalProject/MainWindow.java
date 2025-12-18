@@ -40,40 +40,42 @@ public class MainWindow extends JFrame
     private int deviceWidth;
     private int deviceHeight;
     private MainBackgroundPanel mainBackgroundPanel;
+    private AudioPlayer backgroundAudio;
+    private String backgroundAudioPath = "sounds/mainBgm.wav";
 
     //기본 이미지 로딩
-    ImageIcon continueDefaultIcon = new ImageIcon("images/continue_default.png");
-    ImageIcon campaignDefaultIcon = new ImageIcon("images/campaign_default.png");
-    ImageIcon infinityModeDefaultIcon = new ImageIcon("images/infinity_default.png");
-    ImageIcon loadGameDefaultIcon = new ImageIcon("images/load_default.png");
-    ImageIcon settingDefaultIcon = new ImageIcon("images/setting_default.png");
-    ImageIcon AddWordPageDefaultIcon = new ImageIcon("images/word_default.png");
-    ImageIcon rankingDefaultIcon = new ImageIcon("images/rank_default.png");
-    ImageIcon productionListDefaultIcon = new ImageIcon("images/production_default.png");
-    ImageIcon exitDefaultIcon = new ImageIcon("images/exit_default.png");
-    ImageIcon backgroundImage = new ImageIcon("images/background.jpg");
+    private ImageIcon continueDefaultIcon = new ImageIcon("images/continue_default.png");
+    private ImageIcon campaignDefaultIcon = new ImageIcon("images/campaign_default.png");
+    private ImageIcon infinityModeDefaultIcon = new ImageIcon("images/infinity_default.png");
+    private ImageIcon loadGameDefaultIcon = new ImageIcon("images/load_default.png");
+    private ImageIcon settingDefaultIcon = new ImageIcon("images/setting_default.png");
+    private ImageIcon AddWordPageDefaultIcon = new ImageIcon("images/word_default.png");
+    private ImageIcon rankingDefaultIcon = new ImageIcon("images/rank_default.png");
+    private ImageIcon productionListDefaultIcon = new ImageIcon("images/production_default.png");
+    private ImageIcon exitDefaultIcon = new ImageIcon("images/exit_default.png");
+    private ImageIcon backgroundImage = new ImageIcon("images/background.jpg");
 
     //커서 호버링 이미지 로딩
-    ImageIcon continueRollOverIcon = new ImageIcon("images/continue_hover.png");
-    ImageIcon campaignRollOverIcon = new ImageIcon("images/campaign_hover.png");
-    ImageIcon infinityModeRollOverIcon = new ImageIcon("images/infinity_hover.png");
-    ImageIcon loadGameRollOverIcon = new ImageIcon("images/load_hover.png");
-    ImageIcon settingRollOverIcon = new ImageIcon("images/setting_hover.png");
-    ImageIcon AddWordPageRollOverIcon = new ImageIcon("images/word_hover.png");
-    ImageIcon rankingRollOverIcon = new ImageIcon("images/rank_hover.png");
-    ImageIcon productionListRollOverIcon = new ImageIcon("images/production_hover.png");
-    ImageIcon exitRollOverIcon = new ImageIcon("images/exit_hover.png");
+    private ImageIcon continueRollOverIcon = new ImageIcon("images/continue_hover.png");
+    private ImageIcon campaignRollOverIcon = new ImageIcon("images/campaign_hover.png");
+    private ImageIcon infinityModeRollOverIcon = new ImageIcon("images/infinity_hover.png");
+    private ImageIcon loadGameRollOverIcon = new ImageIcon("images/load_hover.png");
+    private ImageIcon settingRollOverIcon = new ImageIcon("images/setting_hover.png");
+    private ImageIcon AddWordPageRollOverIcon = new ImageIcon("images/word_hover.png");
+    private ImageIcon rankingRollOverIcon = new ImageIcon("images/rank_hover.png");
+    private ImageIcon productionListRollOverIcon = new ImageIcon("images/production_hover.png");
+    private ImageIcon exitRollOverIcon = new ImageIcon("images/exit_hover.png");
 
     //클릭 이미지 로딩
-    ImageIcon continuePressedIcon = new ImageIcon("images/continue_hover.png");
-    ImageIcon campaignPressedIcon = new ImageIcon("images/campaign_hover.png");
-    ImageIcon infinityModePressedIcon = new ImageIcon("images/infinity_hover.png");
-    ImageIcon loadGamePressedIcon = new ImageIcon("images/load_hover.png");
-    ImageIcon settingPressedIcon = new ImageIcon("images/setting_hover.png");
-    ImageIcon AddWordPagePressedIcon = new ImageIcon("images/word_hover.png");
-    ImageIcon rankingPressedIcon = new ImageIcon("images/rank_hover.png");
-    ImageIcon productionListPressedIcon = new ImageIcon("images/production_hover.png");
-    ImageIcon exitPressedIcon = new ImageIcon("images/exit_hover.png");
+    private ImageIcon continuePressedIcon = new ImageIcon("images/continue_hover.png");
+    private ImageIcon campaignPressedIcon = new ImageIcon("images/campaign_hover.png");
+    private ImageIcon infinityModePressedIcon = new ImageIcon("images/infinity_hover.png");
+    private ImageIcon loadGamePressedIcon = new ImageIcon("images/load_hover.png");
+    private ImageIcon settingPressedIcon = new ImageIcon("images/setting_hover.png");
+    private ImageIcon AddWordPagePressedIcon = new ImageIcon("images/word_hover.png");
+    private ImageIcon rankingPressedIcon = new ImageIcon("images/rank_hover.png");
+    private ImageIcon productionListPressedIcon = new ImageIcon("images/production_hover.png");
+    private ImageIcon exitPressedIcon = new ImageIcon("images/exit_hover.png");
 
     //게임을 플레이 할 수 있도록 하는 객체 생성자 메소드
     public MainWindow()
@@ -141,11 +143,14 @@ public class MainWindow extends JFrame
         //기본 UI 생성
         CreateButtons();    // 버튼들 만드는 메소드
 
+        //오디오 플레이어 초기화 및 음악 재생
+        InitializeAudio();
+
         //가시성 설정
         this.setVisible(true);      // 프레임이 보이도록 설정
     }
 
-    private static Dimension getScaledDimensions16x9(int screenWidth, int screenHeight)
+    private Dimension getScaledDimensions16x9(int screenWidth, int screenHeight)
     {
         double targetRatio = 16.0 / 9.0;
         int scaledWidth = screenWidth;
@@ -214,28 +219,37 @@ public class MainWindow extends JFrame
     //메인화면 버튼들을 생성하는 메소드
     private void CreateButtons()
     {
+//        this.exitButton = CreateRelativeButton(exitDefaultIcon, exitRollOverIcon, exitPressedIcon, deviceWidth, deviceHeight, 15, 88, 16, 4);
+//        //this.productionListButton = CreateRelativeButton(productionListDefaultIcon, productionListRollOverIcon, productionListPressedIcon, deviceWidth, deviceHeight, 15, 82, 16, 4);
+//        this.rankingButton = CreateRelativeButton(rankingDefaultIcon, rankingRollOverIcon, rankingPressedIcon, deviceWidth, deviceHeight, 15, 76, 16, 4);
+//        this.AddWordPageButton = CreateRelativeButton(AddWordPageDefaultIcon, AddWordPageRollOverIcon, AddWordPagePressedIcon, deviceWidth, deviceHeight, 15, 70, 16, 4);
+//        //this.settingButton = CreateRelativeButton(settingDefaultIcon, settingRollOverIcon, settingPressedIcon, deviceWidth, deviceHeight, 15, 54, 16, 4);
+//        //this.loadGameButton = CreateRelativeButton(loadGameDefaultIcon, loadGameRollOverIcon, loadGamePressedIcon, deviceWidth, deviceHeight, 15, 48, 16, 4);
+//        //this.infinityModeButton = CreateRelativeButton(infinityModeDefaultIcon, infinityModeRollOverIcon, infinityModePressedIcon, deviceWidth, deviceHeight, 15, 41, 16, 5);
+//        this.campaignButton = CreateRelativeButton(campaignDefaultIcon, campaignRollOverIcon, campaignPressedIcon, deviceWidth, deviceHeight, 15, 35, 16, 4);
+//        //this.continueGameButton = CreateRelativeButton(continueDefaultIcon, continueRollOverIcon, continuePressedIcon, deviceWidth, deviceHeight, 15, 26, 16, 4);
         //버튼 생성
-        this.exitButton = CreateRelativeButton(exitDefaultIcon, exitRollOverIcon, exitPressedIcon, deviceWidth, deviceHeight, 15, 88, 16, 4);
-        this.productionListButton = CreateRelativeButton(productionListDefaultIcon, productionListRollOverIcon, productionListPressedIcon, deviceWidth, deviceHeight, 15, 82, 16, 4);
-        this.rankingButton = CreateRelativeButton(rankingDefaultIcon, rankingRollOverIcon, rankingPressedIcon, deviceWidth, deviceHeight, 15, 76, 16, 4);
-        this.AddWordPageButton = CreateRelativeButton(AddWordPageDefaultIcon, AddWordPageRollOverIcon, AddWordPagePressedIcon, deviceWidth, deviceHeight, 15, 70, 16, 4);
-        this.settingButton = CreateRelativeButton(settingDefaultIcon, settingRollOverIcon, settingPressedIcon, deviceWidth, deviceHeight, 15, 54, 16, 4);
-        this.loadGameButton = CreateRelativeButton(loadGameDefaultIcon, loadGameRollOverIcon, loadGamePressedIcon, deviceWidth, deviceHeight, 15, 48, 16, 4);
-        this.infinityModeButton = CreateRelativeButton(infinityModeDefaultIcon, infinityModeRollOverIcon, infinityModePressedIcon, deviceWidth, deviceHeight, 15, 41, 16, 5);
+        this.exitButton = CreateRelativeButton(exitDefaultIcon, exitRollOverIcon, exitPressedIcon, deviceWidth, deviceHeight, 15, 54, 16, 4);
+        //this.productionListButton = CreateRelativeButton(productionListDefaultIcon, productionListRollOverIcon, productionListPressedIcon, deviceWidth, deviceHeight, 15, 82, 16, 4);
+        this.rankingButton = CreateRelativeButton(rankingDefaultIcon, rankingRollOverIcon, rankingPressedIcon, deviceWidth, deviceHeight, 15, 48, 16, 4);
+        this.AddWordPageButton = CreateRelativeButton(AddWordPageDefaultIcon, AddWordPageRollOverIcon, AddWordPagePressedIcon, deviceWidth, deviceHeight, 15, 41, 16, 4);
+        //this.settingButton = CreateRelativeButton(settingDefaultIcon, settingRollOverIcon, settingPressedIcon, deviceWidth, deviceHeight, 15, 54, 16, 4);
+        //this.loadGameButton = CreateRelativeButton(loadGameDefaultIcon, loadGameRollOverIcon, loadGamePressedIcon, deviceWidth, deviceHeight, 15, 48, 16, 4);
+        //this.infinityModeButton = CreateRelativeButton(infinityModeDefaultIcon, infinityModeRollOverIcon, infinityModePressedIcon, deviceWidth, deviceHeight, 15, 41, 16, 5);
         this.campaignButton = CreateRelativeButton(campaignDefaultIcon, campaignRollOverIcon, campaignPressedIcon, deviceWidth, deviceHeight, 15, 35, 16, 4);
-        this.continueGameButton = CreateRelativeButton(continueDefaultIcon, continueRollOverIcon, continuePressedIcon, deviceWidth, deviceHeight, 15, 26, 16, 4);
+        //this.continueGameButton = CreateRelativeButton(continueDefaultIcon, continueRollOverIcon, continuePressedIcon, deviceWidth, deviceHeight, 15, 26, 16, 4);
 
         //반복 작업을 위한 버튼 리스트 생성
         JButton[] mainMenuButtons =
                 {
-                        continueGameButton,
+                        //continueGameButton,
                         campaignButton,
-                        infinityModeButton,
-                        loadGameButton,
-                        settingButton,
+                        //infinityModeButton,
+                        //loadGameButton,
+                        //settingButton,
                         AddWordPageButton,
                         rankingButton,
-                        productionListButton,
+                        //productionListButton,
                         exitButton,
                 };
 
@@ -248,14 +262,14 @@ public class MainWindow extends JFrame
                 Exit();  // 게임 종료 메소드 호출
             }
         });
-        this.productionListButton.addActionListener(new ActionListener()      // 해당 버튼을 누를 시 발생할 이벤트 설정
-        {
-            @Override
-            public void actionPerformed(ActionEvent e)
-            {
-                ShowCrewList();  // 게임 제작진 목록 표시창으로 이동
-            }
-        });
+//        this.productionListButton.addActionListener(new ActionListener()      // 해당 버튼을 누를 시 발생할 이벤트 설정
+//        {
+//            @Override
+//            public void actionPerformed(ActionEvent e)
+//            {
+//                ShowCrewList();  // 게임 제작진 목록 표시창으로 이동
+//            }
+//        });
         this.rankingButton.addActionListener(new ActionListener()      // 해당 버튼을 누를 시 발생할 이벤트 설정
         {
             @Override
@@ -272,30 +286,30 @@ public class MainWindow extends JFrame
                 AddNewWordPage();  // 게임사 소식 보러가기
             }
         });
-        this.settingButton.addActionListener(new ActionListener()      // 해당 버튼을 누를 시 발생할 이벤트 설정
-        {
-            @Override
-            public void actionPerformed(ActionEvent e)
-            {
-                OpenSetting();  // 설정 페이지 열기
-            }
-        });
-        this.loadGameButton.addActionListener(new ActionListener()      // 해당 버튼을 누를 시 발생할 이벤트 설정
-        {
-            @Override
-            public void actionPerformed(ActionEvent e)
-            {
-                OpenGameDataFile();  // 저장된 게임 불러오기 페이지 열기
-            }
-        });
-        this.infinityModeButton.addActionListener(new ActionListener()      // 해당 버튼을 누를 시 발생할 이벤트 설정
-        {
-            @Override
-            public void actionPerformed(ActionEvent e)
-            {
-                OpenInfinityModeSetting();      // 무한모드 게임 설정열기
-            }
-        });
+//        this.settingButton.addActionListener(new ActionListener()      // 해당 버튼을 누를 시 발생할 이벤트 설정
+//        {
+//            @Override
+//            public void actionPerformed(ActionEvent e)
+//            {
+//                OpenSetting();  // 설정 페이지 열기
+//            }
+//        });
+//        this.loadGameButton.addActionListener(new ActionListener()      // 해당 버튼을 누를 시 발생할 이벤트 설정
+//        {
+//            @Override
+//            public void actionPerformed(ActionEvent e)
+//            {
+//                OpenGameDataFile();  // 저장된 게임 불러오기 페이지 열기
+//            }
+//        });
+//        this.infinityModeButton.addActionListener(new ActionListener()      // 해당 버튼을 누를 시 발생할 이벤트 설정
+//        {
+//            @Override
+//            public void actionPerformed(ActionEvent e)
+//            {
+//                OpenInfinityModeSetting();      // 무한모드 게임 설정열기
+//            }
+//        });
         this.campaignButton.addActionListener(new ActionListener()      // 해당 버튼을 누를 시 발생할 이벤트 설정
         {
             @Override
@@ -304,25 +318,25 @@ public class MainWindow extends JFrame
                 OpenCampaignModeSetting();      // 캠페인 모드 설정 열기
             }
         });
-        this.continueGameButton.addActionListener(new ActionListener()      // 해당 버튼을 누를 시 발생할 이벤트 설정
-        {
-            @Override
-            public void actionPerformed(ActionEvent e)
-            {
-                ContinueRecentGame();       // 최근 진행한 게임 이어하기
-            }
-        });
+//        this.continueGameButton.addActionListener(new ActionListener()      // 해당 버튼을 누를 시 발생할 이벤트 설정
+//        {
+//            @Override
+//            public void actionPerformed(ActionEvent e)
+//            {
+//                ContinueRecentGame();       // 최근 진행한 게임 이어하기
+//            }
+//        });
 
         //버튼 추가
         this.add(exitButton);
-        this.add(productionListButton);
+        //this.add(productionListButton);
         this.add(rankingButton);
         this.add(AddWordPageButton);
-        this.add(settingButton);
-        this.add(loadGameButton);
-        this.add(infinityModeButton);
+        //this.add(settingButton);
+        //this.add(loadGameButton);
+        //this.add(infinityModeButton);
         this.add(campaignButton);
-        this.add(continueGameButton);
+        //this.add(continueGameButton);
 
         //버튼 UI 설정
         for(JButton button : mainMenuButtons)
@@ -333,6 +347,13 @@ public class MainWindow extends JFrame
         }
     }
 
+    private void InitializeAudio()
+    {
+        backgroundAudio = new AudioPlayer(backgroundAudioPath);
+        backgroundAudio.setVolume(0.5);
+        backgroundAudio.play(true);
+    }
+
     //버튼 기능 메소드들
     private void ContinueRecentGame()
     {
@@ -341,8 +362,8 @@ public class MainWindow extends JFrame
 
     private void OpenCampaignModeSetting()
     {
-        new CampaignSelectWindow();
-        this.dispose();
+        new CampaignSelectWindow(this.backgroundAudio, this);
+        this.setVisible(false);
     }
 
     private void OpenInfinityModeSetting()
@@ -378,6 +399,10 @@ public class MainWindow extends JFrame
 
     private void Exit()
     {
+        if(backgroundAudio != null)
+        {
+            backgroundAudio.stop();
+        }
         System.exit(0);
     }
 
