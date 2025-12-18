@@ -355,31 +355,10 @@ public class MainWindow extends JFrame
     }
 
     //버튼 기능 메소드들
-    private void ContinueRecentGame()
-    {
-        //추후 추가예정
-    }
-
     private void OpenCampaignModeSetting()
     {
         new CampaignSelectWindow(this.backgroundAudio, this);
         this.setVisible(false);
-    }
-
-    private void OpenInfinityModeSetting()
-    {
-        //추후 추가예정
-    }
-
-    private void OpenGameDataFile()
-    {
-        //추후 추가예정
-    }
-
-    private void OpenSetting()
-    {
-        new SettingWindow();
-        this.dispose();
     }
 
     private void AddNewWordPage()
@@ -390,11 +369,6 @@ public class MainWindow extends JFrame
     private void OpenRankingPage()
     {
         new RankWindow(deviceWidth, deviceHeight);
-    }
-
-    private void ShowCrewList()
-    {
-        new ProductionListWindow();
     }
 
     private void Exit()
